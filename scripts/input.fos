@@ -83,7 +83,7 @@ bool IsShiftDown(){
     return IsKeyPressed(DIK_LSHIFT) || IsKeyPressed(DIK_RSHIFT); 
 }
 bool IsWithoutConsole() {
-    return ( GUI_GetActiveScreen().Index == CLIENT_MAIN_SCREEN_GAME && !__ConsoleActive && !GUI_IsConsoleActive() );
+    return ( GUI_GetActiveScreen().Index == CLIENT_MAIN_SCREEN_GAME /*&& !__ConsoleActive*/ && !GUI_IsConsoleActive() );
 }
 void KeyPress(int key) { 
     if(key == DIK_TEXT) return; // Do not process ghost keys
@@ -142,7 +142,7 @@ void mouse_down( int button ) { // Engine callback
     KeysDownCount += 1;
 
     MousePress(button);
-    if(RunHotkeys()) return;
+    if(IsWithoutConsole() && RunHotkeys()) return;
 
     GUI_EngineCallback_MouseDown( button );
 }
@@ -179,7 +179,9 @@ void key_down( uint8 key, string@ text ) { // Engine callback
     // Avoid input box overlap
     if(!__ConsoleActive) KeyPress(key);
     // Match hotkeys
-    if(IsWithoutConsole() && RunHotkeys()) return;
+    if(IsWithoutConsole() && RunHotkeys()) {
+        return;
+    }
     // GUI handler
     GUI_EngineCallback_KeyDown( key, text );
 }

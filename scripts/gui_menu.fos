@@ -7,7 +7,7 @@
 #define __GUI_MENU__
 #include "gui_menu_h.fos"
 
-// Casts function handle to MenuActionCallback
+/*// Casts function handle to MenuActionCallback
 MenuActionCallback@ MenuAction(MenuActionCallback@ action){ // EXPORT
 	return action;
 }
@@ -161,4 +161,4 @@ namespace GUIMenu
 			SetSize(0,0);
 		}
 	}
-}
+}*/

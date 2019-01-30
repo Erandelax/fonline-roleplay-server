@@ -109,6 +109,43 @@ void InputGlobalInit()
     RegisterArgument("DEFAULT","GLOBAL:CURSOR",CURSOR_DEFAULT);
     RegisterArgument("MOVE","GLOBAL:CURSOR",CURSOR_MOVE);
     RegisterHotkey("E; GLOBAL:CURSOR; SELF, ATTACK");
+
+    RegisterCommand(
+        "DEBUG:MENU",
+        @__DebugMenu
+    );
+    LimitCommand("DEBUG:MENU",200);
+    RegisterHotkey("C; DEBUG:MENU");
+}
+
+// DEBUG:MENU
+void __DebugMenu(int arg0, int arg1, int arg2, string@ argString, int[]@ argInt){ 
+    Message("DEBUG MENU START");
+
+    Menu menu();
+    menu.Add(MenuAction("Menu header A"))
+        .Add(
+            Menu("Submenu B").Add(MenuAction("Submenu item A",@MenuEcho))
+                .Add(MenuAction("Submenu item B",@MenuEcho))
+                .Add(MenuAction("Submenu item C",@MenuEcho))
+        )
+        .Add(MenuAction("Menu item C",@MenuEcho));
+    menu.Add(MenuAction("Menu header D"))
+        .Add(MenuAction("Menu item E",@MenuEcho))
+        .Add(MenuAction("Menu item F",@MenuEcho))
+        .Add(MenuAction("Menu item G",@MenuEcho));
+    menu.Add("Menu header H")
+        .Add(MenuAction("Menu item I",@MenuEcho))
+        .Add(MenuAction("Menu item J",@MenuEcho))
+        .Add(MenuAction("Menu item K",@MenuEcho))
+        .Add(MenuAction("Menu item L",@MenuEcho))
+        .Add(MenuAction("Menu item M",@MenuEcho));
+    menu.Popup(__MouseX,__MouseY);
+
+    Message("DEBUG MENU END");
+}
+void MenuEcho(int x, int y, MenuAction@ this) {
+    Message("ACTION: " + this.GetTitle());
 }
 
 // CAMERA:MOVE 

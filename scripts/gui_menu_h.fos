@@ -1,7 +1,242 @@
 // by Erandelax aka Sjaman 24/10/2018
-funcdef bool MenuActionCallback(int,int,string@);
+funcdef void MenuActionCallback(int,int,MenuAction@);
 
-#ifndef __GUI_MENU__
+#include "_client_defines.fos"
+
+/*#ifndef __GUI_MENU__
 import void ShowMenu(dictionary@,int,int) from "gui_menu";
 import MenuActionCallback@ MenuAction(MenuActionCallback@) from "gui_menu";
-#endif
+#endif*/
+
+interface MenuItem
+{
+	void Invoke(int,int);
+	bool IsStatic();
+	string GetTitle();
+} 
+
+class MenuAction : MenuItem
+{
+	protected string Title;
+	protected MenuActionCallback@ Action;
+
+	MenuAction(string title, MenuActionCallback@ action) {
+		this.Title = title;
+		@this.Action = @action;
+	}
+
+	MenuAction(string title, MenuAction@ menuAction) {
+		this.Title = title;
+		@this.Action = @menuAction.Action;
+	}
+
+	MenuAction(string title) {
+		this.Title = title;
+	}
+
+	string GetTitle() {
+		return this.Title;
+	}
+
+	void Invoke(int x ,int y){
+		Message("INVOKED2 "+x + ":"+y);
+	}
+
+	bool IsStatic() {
+		return this.Action is null;
+	}
+}
+
+class Menu : MenuItem
+{
+	protected string Title;
+	protected MenuItem@[] Items;
+	protected int X = 0;
+	protected int Y = 0;
+
+	Menu(string title) {
+		this.Title = title;
+	}
+
+	uint GetSize(){
+		return this.Items.length;
+	}
+
+	MenuItem@ GetItem(uint id) {
+		return this.Items[id];
+	}
+
+	Menu@ Add(string title) {
+		this.Add(MenuAction(title));
+		return this;
+	}
+
+	Menu@ Add(MenuItem@ item) {
+		this.Items.insertLast(item);
+		return this;
+	}
+
+	void Popup(int X, int Y) {
+		GUIPopupMenu::Init(X,Y,@this);
+	}
+
+	void Invoke(int X, int Y){
+		this.Popup(X,Y);
+		return;
+	}
+
+	string GetTitle() {
+		return this.Title + "...";
+	}
+
+	bool IsStatic() {
+		return false;
+	}
+}
+
+namespace GUIPopupMenu
+{
+
+	void Init(int X, int Y, Menu@ menu) {
+		// Get existing or create new popup menu screen
+		Screen@ _screen = cast<Screen>( GUI_GetScreen(CLIENT_SCREEN_POPUP_MENU) );
+
+		if (_screen is null) {
+			@_screen = Screen();
+			_screen.Init(null);
+			GUI_RegisterScreen(CLIENT_SCREEN_POPUP_MENU, _screen);
+		}
+
+		// Fill with data
+		MenuGrid _grid();
+		MenuItem _item();
+		Label _label();
+		Icon _icon();
+		_label.Init(_item);
+		_icon.Init(_item);	
+		_item.Init(_grid);
+		_grid.Init(_screen);
+		_grid.SetPosition(X,Y);	
+
+		_grid.SetMenu(@menu);		
+
+		ShowScreen(CLIENT_SCREEN_POPUP_MENU);
+	}
+
+	class Screen : GUIScreen
+	{
+		void OnConstruct() override {
+			SetPosition(0,0);
+			SetDock(DOCK_FILL);
+			SetSize(__ScreenWidth, __ScreenHeight);
+		}
+
+		void OnMouseDown(int button) override {
+			HideScreen(CLIENT_SCREEN_POPUP_MENU);
+			while (this._Children.length > 0) this._Children[0].Remove();
+		}
+	}
+
+	class MenuGrid : GUIGrid
+	{
+		::Menu@ Menu;
+		bool IsScrollable = false;
+		int ScrollOffset = 0;
+		int MaxOffset = 0;
+		int OffsetRange = 10;
+
+		void OnConstruct() override {
+			this.SetCellPrototype("MenuItem");
+		}
+
+		void SetMenu(::Menu@ menu) {
+			@this.Menu = menu;
+			uint size = menu.GetSize();
+			if (size > this.OffsetRange) {
+				this.ResizeGrid(this.OffsetRange);
+				this.IsScrollable = true;
+				this.MaxOffset = size - this.OffsetRange;
+			} else {
+				this.ResizeGrid(size);
+			}
+		}
+	}
+
+	class MenuItem : GUIPanel 
+	{
+		bool IsStatic = false;
+
+		void OnConstruct() override {
+			this.SetSize(100,13);
+		}
+
+		void OnMouseDown(int button) override {
+			MenuGrid@ parent = cast<MenuGrid>(Parent);
+			if (button == MOUSE_BUTTON_WHEEL_UP || button == MOUSE_BUTTON_WHEEL_DOWN) {
+				if (parent.IsScrollable) {
+					if (button == MOUSE_BUTTON_WHEEL_UP) {
+						if (parent.ScrollOffset > 0) {
+							parent.ScrollOffset--;
+							parent.ResizeGrid(parent.OffsetRange);
+						}
+					} else {
+						if (parent.ScrollOffset < parent.MaxOffset - 1) {
+							parent.ScrollOffset++;
+							parent.ResizeGrid(parent.OffsetRange);
+						}
+					}
+				}
+			} else {
+				::MenuItem@ item = parent.Menu.GetItem(parent.ScrollOffset + this.CellIndex);
+				if (item !is null && !this.IsStatic) {
+					item.Invoke(_AbsolutePosX + _Width,_AbsolutePosY);
+				}
+			}
+		}
+
+		void OnResizeGrid( GUIObject@ cell, uint cellIndex ) override {
+			MenuGrid@ parent = cast<MenuGrid>(Parent);
+			Label@ label = cast<Label>( this.Find("Label") );
+			::MenuItem@ item = parent.Menu.GetItem(parent.ScrollOffset + cellIndex);
+			
+			this.IsStatic = item.IsStatic();
+			label.SetText( item.GetTitle() );
+
+			if (this.IsStatic) label.SetTextColor( COLOR_RED );
+		}
+
+		void OnHoverChanged() override {
+			Label@ label = cast<Label>(Find("Label"));
+
+			if (IsHovered) {
+				label.SetTextColor( COLOR_WHITE );
+			}
+			else {
+				label.SetTextColor( this.IsStatic ? COLOR_RED : COLOR_GREEN );
+			}
+		}
+	}
+
+	class Label : GUIText 
+	{
+		void OnConstruct() override {
+			this.SetNotHittable(true);
+			this.SetSize(Parent.Width, Parent.Height);
+			this.SetTextFlags(FT_BORDERED|FT_CENTERY);
+	        this.SetTextColor(COLOR_GREEN);
+	        this.SetText("<menu item>");
+		}
+
+		void OnResizeGrid( GUIObject@ cell, uint cellIndex ) override {
+			Message("PANEL " + cellIndex);
+		}
+	}
+
+	class Icon : GUIPanel
+	{
+		void OnConstruct() override {
+			this.SetNotHittable( true );
+			this.SetSize(0,0);
+		}
+	}
+}

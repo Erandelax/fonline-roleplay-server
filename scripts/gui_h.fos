@@ -1686,6 +1686,7 @@ shared class GUIGrid : GUIPanel
         if( _CellPrototype is null || _CellPrototype.length() == 0 )
             return;
         GUIObject@ cellPrototype = ( _CellPrototype[ 0 ] != "." ? Find( _CellPrototype ) : Parent.Find( _CellPrototype.substring( 1 ), false ) );
+
         if( cellPrototype is null )
             return;
 
