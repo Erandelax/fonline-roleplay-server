@@ -50,6 +50,89 @@ import int[] Keys(int key0 = 0, int key1 = 0, int key2 = 0, int key3 = 0, int ke
     #ifndef Critter
 	#define Critter CritterCl
 	#endif
+
+	// Class that is used to store key states at input.fos
+	shared class KeyStateStorage
+	{
+	    protected int[] state;
+
+	    // Set key to pressed state
+	    void Set(int id, bool isPressed) {
+	        int offset = int( floor(id/32) );
+
+	        if (isPressed) {
+	            this.state[offset] = this.state[offset] | (1 << (id % 32));
+	        } 
+	        else {
+	            this.state[offset] = this.state[offset] & ( 0xFFFFFFFF ^ (1 << (id % 32)) );
+	        }
+	    }
+
+	    // Check if key is pressed
+	    bool Get(int id) {
+	        int offset = int( floor(id/32) );
+	        return 0 != ( this.state[offset] & (1 << (id % 32)) );
+	    }
+
+	    // Set all keys to unpressed state
+	    void Reset() {
+	        if (this.state.length < 9) this.state.resize(9);
+	        for (uint i = 0; i < this.state.length; i++) this.state[i] = 0;
+	    }
+
+		// Get string key of current key combination
+	    string Hash() {
+	        string result = "";
+	        for (uint i = 0; i < this.state.length; i++) result += "." + this.state[i];
+	        return result;
+	    }
+
+	    // Parse string key of current key combination
+		int[] Parse(string hash) {
+			string@[]@ parts = split(hash,".");
+	    	int[] state;
+	    	state.resize(parts.length);
+	    	int value = 0;
+	    	for (uint i = 0; i < parts.length; i++) {
+	    		if (StrToInt(parts[i],value)) {
+	    			state[i] = value;
+	    		}
+	    	}
+	    	return state;
+		}
+
+		// Return current state dump
+		int[] Dump() {
+			return this.state;
+		}
+
+		// Check if current state contains state (for partial match)
+		bool Contains(int[]& state) {
+			bool result = true;
+			uint len = this.state.length > state.length ? this.state.length : state.length;
+			for (uint i = 0; i < len; i++) {
+				if ( 0 == this.state[i] & state[i] ) {
+					result = false;
+					break;
+				}
+			}
+			return result;
+		}
+
+		// Constructors
+	    KeyStateStorage() {
+	        this.Reset();
+	    }
+
+	    KeyStateStorage(int[] state) {
+	    	this.state = state;
+	    }
+
+	    KeyStateStorage(string hash) {
+	    	this.state = this.Parse(hash);
+	    }
+
+	}
 #endif
 
 // Client callables pattern

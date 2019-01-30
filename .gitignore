@@ -3,7 +3,6 @@ logs/
 save/
 scripts/ASCompiler/
 profiler/
-FOnlineServer.cfg
 *.log
 
 

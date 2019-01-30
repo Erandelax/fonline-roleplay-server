@@ -6,7 +6,9 @@
 #define __INPUT_MODULE__
 #include "input_h.fos"
 
-string KeyPressed; // String[keyCode] = {\xFFFF == NOT PRESSED || \x0001 == CLICK || \x0002 == HOLD}
+KeyStateStorage KeyStates;
+
+//string KeyPressed; // String[keyCode] = {\xFFFF == NOT PRESSED || \x0001 == CLICK || \x0002 == HOLD}
 dictionary HotkeyCommands; // Correspondence <Hotkey> : <Command tag>
 dictionary MessageCommands; // Correspondence <Hotkey> : <Command arguments>
 dictionary AvailableCommands; // Correspondence <Command tag> : <Handler function>
@@ -61,78 +63,62 @@ dictionary KeyCode = {
     {"NEXT",DIK_NEXT},{"INSERT",DIK_INSERT},{"DELETE",DIK_DELETE},
     {"LWIN",DIK_LWIN},{"RWIN",DIK_RWIN} 
 };
-string[] ReKeyCode;
+
+
 // //////////////////////////////////////////////////////////////////////////////////////////////////
-
-#define KEY_STATE_CLEAR     ("F")
-#define KEY_STATE_PRESSED   ("P")
-
 // Export
-bool IsKeyPressed(int key) { return KeyPressed[key] != KEY_STATE_CLEAR; }
-bool IsMousePressed(int key){ return IsKeyPressed(256 + key); }
-bool IsCtrlDown(){ return IsKeyPressed(DIK_RCONTROL) || IsKeyPressed(DIK_LCONTROL); }
-bool IsAltDown(){ return IsKeyPressed(DIK_LMENU) || IsKeyPressed(DIK_RMENU); }
-bool IsShiftDown(){ return IsKeyPressed(DIK_LSHIFT) || IsKeyPressed(DIK_RSHIFT); }
-bool IsWithoutConsole(){
+bool IsKeyPressed(int key) { 
+    return KeyStates.Get(key);
+}
+bool IsMousePressed(int key){ 
+    return KeyStates.Get(256 + key);
+}
+bool IsCtrlDown(){ 
+    return IsKeyPressed(DIK_RCONTROL) || IsKeyPressed(DIK_LCONTROL); 
+}
+bool IsAltDown(){ 
+    return IsKeyPressed(DIK_LMENU) || IsKeyPressed(DIK_RMENU); 
+}
+bool IsShiftDown(){ 
+    return IsKeyPressed(DIK_LSHIFT) || IsKeyPressed(DIK_RSHIFT); 
+}
+bool IsWithoutConsole() {
     return ( GUI_GetActiveScreen().Index == CLIENT_MAIN_SCREEN_GAME && !__ConsoleActive && !GUI_IsConsoleActive() );
 }
-void KeyPress(int key){ 
+void KeyPress(int key) { 
     if(key == DIK_TEXT) return; // Do not process ghost keys
-    KeyPressed[key] = KEY_STATE_PRESSED; 
+    KeyStates.Set(key, true);
 }
-void MousePress(int key){ 
-    KeyPress(256 + key); 
+void MousePress(int key) { 
+    KeyStates.Set(256 + key, true);
 }
-void KeyUnpress(int key){
+void KeyUnpress(int key) {
     if(key == DIK_TEXT) return;
-    KeyPressed[key] = KEY_STATE_CLEAR; 
+    KeyStates.Set(key, false);
 }
-void MouseUnpress(int key){ 
-    KeyUnpress(256 + key); 
+void MouseUnpress(int key) { 
+    KeyStates.Set(256 + key, false);
 }
-void KeysReset(string& keyPressed){
-    string hash;
-    for(uint pos = 0; pos < 300; pos++) hash += KEY_STATE_CLEAR;
-    keyPressed = hash;
+string GetKeysHash() {
+    return KeyStates.Hash(); 
 }
-string GetKeysHash(){ return KeyPressed; }
 string GetKeysHash(int[] keys){
-    string hash;
-    KeysReset(hash);
-    for(uint pos = 0, length = keys.length; pos < length; pos++){
-        if(keys[pos] < 0) { // mouse keys
-            hash[256 - (keys[pos])] = KEY_STATE_PRESSED;
-        } else {
-            hash[keys[pos]] = KEY_STATE_PRESSED;
-        }
-    }
-    return hash;
+    KeyStateStorage kss;
+    for (uint i = 0; i < keys.length; i++) kss.Set(keys[i],true);
+    return kss.Hash();
 }
+
 // Export to gui.fos
-string @ GetKeyPressed() { return KeyPressed; }
-string @ GetMousePressed() { return KeyPressed; }
+string @ GetKeyPressed() { return KeyStates.Hash(); }
+string @ GetMousePressed() { return KeyStates.Hash(); }
 
 int[] GetPressedKeyCodes(){
-    int[] result;
-    for(uint pos = 0, length = KeyPressed.length(); pos < length; pos++){
+    int[] result = {};
+    /*for(uint pos = 0, length = KeyPressed.length(); pos < length; pos++){
         if(KeyPressed[pos] != KEY_STATE_CLEAR) result.insertLast(pos);
-    }
+    }*/
     return result;
 }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Initialization
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-class ScriptInitializer
-{
-    ScriptInitializer() {
-        KeysReset(KeyPressed);
-    }
-}
-ScriptInitializer _ScriptInitializer;
-
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Global functions
@@ -193,7 +179,7 @@ void key_down( uint8 key, string@ text ) { // Engine callback
     // Avoid input box overlap
     if(!__ConsoleActive) KeyPress(key);
     // Match hotkeys
-    if(RunHotkeys()) return;
+    if(IsWithoutConsole() && RunHotkeys()) return;
     // GUI handler
     GUI_EngineCallback_KeyDown( key, text );
 }
@@ -220,8 +206,8 @@ void key_up( uint8 key ) { // Engine callback
 void input_lost() { // Engine callback
     KeysDownCount = 0;
 
-    // Reset states
-    KeysReset(KeyPressed);
+    // Reset key states
+    KeyStates.Reset();
 
     // GUI handler
     GUI_EngineCallback_InputLost();
@@ -262,20 +248,37 @@ string@ SanitizeMacro(string@ macro){
 }
 
 // Running hotkeys
-uint _runHotkeysTick = 0; // Last run tick
-bool RunHotkeys(){
-    string hash = GetKeysHash();
-    
-    if( HotkeyCommands.exists(hash) ){
-        // Prevent repeating
-        uint tick = GetTick();
-        if( _runHotkeysTick != tick ) _runHotkeysTick = tick;
-        else return true;
-        // Process hotkey
+uint _runHotkeysTick = 0; 
+
+bool RunHotkeys() {
+    string hash = KeyStates.Hash();
+    uint   tick = GetTick();
+    bool   fired = false;
+
+    if( _runHotkeysTick == tick ) return true; // Prevent repeating
+
+    if (HotkeyCommands.exists(hash)) {
         cast<CommandHandler>(HotkeyCommands[hash]).Run();
-        return true;
+        Message("fired: " + hash);
+        fired = true;
+    } 
+    else {
+        string[]@ hashes = HotkeyCommands.getKeys();
+        for (uint i = 0; i < hashes.length; i++) {
+            int[] state = KeyStates.Parse(hashes[i]);
+            if (KeyStates.Contains(state)) {
+                cast<CommandHandler>(HotkeyCommands[hashes[i]]).Run();
+                Message("FIRED: " + hashes[i]);
+                fired = true;
+            }
+        }
     }
-    return false;
+
+    if (fired) {
+        _runHotkeysTick = tick;
+    }
+
+    return fired;
 }
 
 // Creates keycodes array from keycode arguments
@@ -1006,4 +1009,3 @@ class ArgumentHandler_STRING : ArgumentHandler
         return value;
     }
 }
-
