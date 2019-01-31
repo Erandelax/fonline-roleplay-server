@@ -1803,9 +1803,9 @@
 #endif
 
 // Load client extensions
-#ifdef __CLIENT
+/*#ifdef __CLIENT
 # pragma bindfunc "void fonline_ext_dll() -> fonline_ext.dll CLIENT"
-#endif
+#endif*/
 
 // /
 // / Item prototypes fields

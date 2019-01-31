@@ -120,45 +120,8 @@ void InputGlobalInit()
 
 // DEBUG:MENU
 void __DebugMenu(int arg0, int arg1, int arg2, string@ argString, int[]@ argInt){ 
-    Message("DEBUG MENU START");
-
-    Menu menu();
-    menu.Add("Menu header 0")
-        .Add(
-            Menu("Submenu 1...")
-                .Add(MenuAction("Submenu item 2",@MenuEcho))
-                .Add(MenuAction("Submenu item 3",@MenuEcho))
-                .Add(
-                    Menu("Submenu 4...")
-                        .Add(MenuAction("Submenu item 5",@MenuEcho))
-                        .Add(MenuAction("Submenu item 6",@MenuEcho))
-                        .Add(MenuAction("Submenu item 7",@MenuEcho))
-                )
-                .Add(MenuAction("Submenu item 8",@MenuEcho))
-        )
-        .Add(
-            Menu("Submenu 9...")
-                .Add(MenuAction("Submenu item 10",@MenuEcho))
-                .Add(MenuAction("Submenu item 11",@MenuEcho))
-                .Add(MenuAction("Submenu item 12",@MenuEcho))
-        );
-    menu.Add("Menu header 13")
-        .Add(MenuAction("Menu item 14",@MenuEcho))
-        .Add(MenuAction("Menu item 15",@MenuEcho))
-        .Add(MenuAction("Menu item 16",@MenuEcho));
-    menu.Add("Menu header 17")
-        .Add(MenuAction("Menu item 18",@MenuEcho))
-        .Add(MenuAction("Menu item 19",@MenuEcho))
-        .Add(MenuAction("Menu item 20",@MenuEcho))
-        .Add(MenuAction("Menu item 21",@MenuEcho))
-        .Add(MenuAction("Menu item 22",@MenuEcho))
-        .Add(MenuAction("Menu item 23",@MenuEcho));
-    menu.Popup(__MouseX,__MouseY);
-
-    Message("DEBUG MENU END");
-}
-void MenuEcho(int x, int y, MenuAction@ this) {
-    Message("ACTION: " + this.GetTitle());
+    // Call menu at mouse coordinates
+    ContextMenu(__MouseX,__MouseY);
 }
 
 // CAMERA:MOVE 

@@ -1,10 +1,71 @@
 // by Erandelax aka Sjaman 24/10/2018
-funcdef void MenuActionCallback(int,int,MenuAction@);
+
+/*
+Usage example:
+
+	#include "gui_menu_h.fos"
+
+	void Init(){
+		AddContextMenu(MenuAction("Walk here"), @muWalkHere); // Add single menu item
+
+		AddPlayerContextMenu(
+			Menu("Self...") 								// Create submenu of items
+				.Add("MenuAction",@muInventory)
+				.Add("Skills")
+				.Add("First aid",@muSkillFirstAid)
+				.Add("Surgery",@muSkillSurgery)
+				.Add( 										// Create subsubmenu of items
+					Menu("Animations...")
+						.Add("Fall back",@muAnimFallBack)
+						.Add("Fall front",@muAnimFallFront)
+				)
+		);
+
+		AddNpcContextMenu(MenuAction("Call here",@muNpcCallHere));
+
+		AddItemPidContextMenu(PID_CHAIR, MenuAction("Rotate chair",@muItemRotate));
+	}
+
+	void muWalkHere(MenuActionResult@ info) {
+	    uint16 HexX = info.HexX;
+	    uint16 HexY = info.HexY;
+	    // ... do smth
+	}
+
+	void muSkillFirstAid(MenuActionResult@ info) {
+		CritterCl@ cr = info.Critter;
+		// ... make self heal <cr>
+	}
+
+	// And somewhere at `input.fos`
+	void mouse_down(...) {
+		// ...
+	 	if (DIK_RIGHT_MOUSE_BUTTON == button) ContextMenu(__MouseX,__MouseY);
+	}
+
+*/
+
+funcdef void MenuActionCallback(MenuActionResult@);
+funcdef void MenuEventCallback(Menu@);
 
 #include "gui_h.fos"
 #include "_client_defines.fos"
 
-interface MenuItem
+#ifndef __GUI_MENU__
+import void ContextMenu(int ScreenX,int ScreenY) from "gui_menu";
+import void AddContextMenu(MenuItem@ menuItem) from "gui_menu";
+import void AddContextMenuIf(string hash, MenuItem@ menuItem) from "gui_menu";
+import void AddItemContextMenu(MenuItem@ menuItem) from "gui_menu";
+import void AddItemPidContextMenu(uint16 pid, MenuItem@ menuItem) from "gui_menu";
+import void AddChosenContextMenu(MenuItem@ menuItem) from "gui_menu";
+import void AddNpcContextMenu(MenuItem@ menuItem) from "gui_menu";
+import void AddPlayerContextMenu(MenuItem@ menuItem) from "gui_menu";
+import void AddDeadContextMenu(MenuItem@ menuItem) from "gui_menu";
+import void AddHexContextMenu(MenuItem@ menuItem) from "gui_menu";
+
+#endif
+
+shared interface MenuItem
 {
 	void Click(int,int);
 	
@@ -18,6 +79,14 @@ interface MenuItem
 	MenuItem@ GetItem(uint);
 
 	void SetExpanded(bool);
+}
+
+class MenuActionResult {
+	MenuAction@ Action = null;
+	CritterCl@ Critter = null;
+	ItemCl@ Item = null;
+	int X = 0;
+	int Y = 0;
 }
 
 class MenuAction : MenuItem
@@ -59,6 +128,20 @@ class MenuAction : MenuItem
 
 	void Click(int X, int Y) {
 		Message("CLICK:"+X+"/"+Y);
+	}
+
+	void Click(int X, int Y, CritterCl@ critter, ItemCl@ item) {
+		if (this.IsStatic()) {
+			Message("ERROR: Action does not exist");
+		} else {
+			MenuActionResult result();
+			@result.Action = @this;
+			@result.Critter = critter;
+			@result.Item = item;
+			result.X = X;
+			result.Y = Y;
+			this.Action(result);
+		}
 	}
 
 	MenuAction(string title, MenuActionCallback@ action) {
@@ -105,7 +188,7 @@ class Menu : MenuItem
 		}
 		if (nextParentPos == id) {
 			return this.Items[pos];
-		} 
+		}
 		else {
 			depth++;
 			return this.Items[lastPos].GetItem(id - parentPos - 1, depth);
@@ -181,6 +264,9 @@ namespace GUIPopupMenu
 			@_screen = MenuScreen();
 			_screen.Init(null);
 			GUI_RegisterScreen(CLIENT_SCREEN_POPUP_MENU, _screen);
+		} else {
+			HideScreen(CLIENT_SCREEN_POPUP_MENU);
+			while (_screen._Children.length > 0) _screen._Children[0].Remove();
 		}
 
 		// Fill it with data
@@ -192,7 +278,7 @@ namespace GUIPopupMenu
 		_icon.Init(_item);	
 		_item.Init(_grid);
 		_grid.Init(_screen);
-		_grid.SetPosition(X,Y);	
+		_grid.SetTarget(X,Y);	
 		_grid.SetMenu(@menu);		
 
 		ShowScreen(CLIENT_SCREEN_POPUP_MENU);
@@ -219,9 +305,24 @@ namespace GUIPopupMenu
 		int ScrollOffset = 0;
 		int ScrollLimit = 0;
 		int ScrollRange = 12;
+		int X = 0;
+		int Y = 0;
+		CritterCl@ Critter;
+		ItemCl@ Item;
+
+		~MenuGrid() {
+			@this.Critter = null;
+			@this.Item = null;
+		}
 
 		void OnConstruct() override {
 			this.SetCellPrototype("MenuItem");
+		}
+
+		void SetTarget(int X, int Y) {
+			this.SetPosition(X,Y);
+			@this.Critter = GetMonitorCritter(X,Y);
+			@this.Item 	  = GetMonitorItem(X,Y);
 		}
 
 		void SetMenu(::Menu@ menu) {
@@ -236,7 +337,7 @@ namespace GUIPopupMenu
 				if (size <= this.ScrollRange) {
 					this.Scrollable = false;
 					this.ScrollLimit = size;
-					this.ResizeGrid(size);
+					this.ResizeGrid(size - 1);
 					return;
 				}
 				this.Scrollable = true;
@@ -251,7 +352,7 @@ namespace GUIPopupMenu
 		bool Static = false;
 
 		void OnConstruct() override {
-			this.SetSize(100,13);
+			this.SetSize(300,13);
 		}
 
 		void OnMouseDown(int button) override {
@@ -275,7 +376,12 @@ namespace GUIPopupMenu
 			else {
 				::MenuItem@ item = parent.Menu.GetItem(parent.ScrollOffset + this.CellIndex);
 				if (null !is item && !this.Static) {
-					item.Click(_AbsolutePosX, _AbsolutePosY);
+					::MenuAction@ action = cast<MenuAction>(item);
+					if (null is action) { // Submenu
+						item.Click(_AbsolutePosX, _AbsolutePosY);
+					} else { // Perform action
+						action.Click(parent.X,parent.Y,parent.Critter,parent.Item);
+					}
 					parent.Update();
 				}
 			}
@@ -294,6 +400,8 @@ namespace GUIPopupMenu
 				if (this.Static) {
 					label.SetTextColor( COLOR_RED );
 				}
+
+				label.SetSize( label.Text.length() * 14, 13 );
 			}
 		}
 
@@ -316,11 +424,7 @@ namespace GUIPopupMenu
 			this.SetSize(Parent.Width, Parent.Height);
 			this.SetTextFlags(FT_BORDERED|FT_CENTERY);
 	        this.SetTextColor(COLOR_GREEN);
-	        this.SetText("<menu item>");
-		}
-
-		void OnResizeGrid( GUIObject@ cell, uint cellIndex ) override {
-			Message("PANEL " + cellIndex);
+	        this.SetText("...");
 		}
 	}
 

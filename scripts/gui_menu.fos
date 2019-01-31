@@ -7,158 +7,121 @@
 #define __GUI_MENU__
 #include "gui_menu_h.fos"
 
-/*// Casts function handle to MenuActionCallback
-MenuActionCallback@ MenuAction(MenuActionCallback@ action){ // EXPORT
-	return action;
+// Register common menu items (EXPORT)
+// Such items are shown every time u call context menu popup
+MenuItem@[] CommonItems;
+void AddContextMenu(MenuItem@ menuItem) {
+	CommonItems.insertLast(@menuItem);
 }
 
-// Shows menu according to dictionary
-void ShowMenu(dictionary@ menu, int screenX, int screenY){ // EXPORT
-	GUIMenu::Init(CLIENT_SCREEN_DYNAMIC_MENU,menu);
+// Fill context menu with stored common items
+void FillContextMenu(Menu& menu) {
+	if (CommonItems.length > 0) {
+		for (uint i = 0; i < CommonItems.length; i++) {
+			menu.Add(CommonItems[i]);
+		}
+	}
 }
 
-namespace GUIMenu
-{
-	dictionary@ Registry;
-	string[] RegistryKeys;
-	int ScreenId;
-	int ScreenX;
-	int ScreenY;
-	int RowHeight = 13;
+// Register conditional menu items
+// Such items are shown every time u call context menu with proper hash parameter
+dictionary ConditionalItems;
+void AddContextMenuIf(string hash, MenuItem@ menuItem) {
+	MenuItem@[]@ actions = null;
 
-	void Init(int screenId, dictionary@ registry){
-		if(registry is null) {
-			Message("ERROR: Menu is not initialized.");
-			return;
-		}
-
-		@Registry = registry;
-		RegistryKeys = Registry.getKeys();
-		RegistryKeys.sortAsc();
-		Message("Creating "+RegistryKeys.length);
-
-		Screen _screen();
-		_screen.Init(null);		
-		MenuGrid _menuGrid();
-		_menuGrid.Init(_screen);		
-		MenuItem _menuItem();
-		_menuItem.Init(_menuGrid);
-		MenuLabel _menuLabel();
-		_menuLabel.Init(_menuItem);
-		MenuIcon _menuIcon();
-		_menuIcon.Init(_menuItem);
-
-		ScreenId = screenId;
-		GUI_RegisterScreen(screenId, _screen );
-		ShowScreen(screenId);
+	if (ConditionalItems.exists(hash)) {
+		@actions = cast<MenuItem@[]@>(ConditionalItems[hash]);
 	}
 
-	class Screen : GUIScreen
-	{
-		void OnConstruct() override {
-			SetPosition(0,0);
-			SetDock( DOCK_FILL );
-			SetSize(__ScreenWidth,__ScreenHeight);
-			ScreenX = __MouseX;
-			ScreenY = __MouseY;
-		}
-		void OnMouseDown( int button ) override {
-			HideScreen(ScreenId);
-		}
+	if (null is actions) {
+		MenuItem@[] newActions;
+		@actions = newActions;
 	}
 
-	class MenuGrid: GUIGrid
-	{
-		void OnConstruct() override {
-			SetPosition(ScreenX,ScreenY);
-			Message("Menu "+RegistryKeys.length);
-			SetCellPrototype("MenuItem");
-			SetGridSize(RegistryKeys.length);
-		}
-	}
+	actions.insertLast(@menuItem);
 
-	class MenuItem: GUIPanel
-	{
-		uint Id = 0;
+	@ConditionalItems[hash] = actions;
+}
 
-		void OnConstruct() override {
-			SetSize(300,RowHeight);
-			Message("ITEM");
-		}
-
-		void OnMouseDown( int button ) override {
-			string key = RegistryKeys[this.Id];
-			MenuActionCallback@ callback = cast<MenuActionCallback>( Registry[key] );
-			if(callback is null){ // @@todo make code beautiful
-				Message("ERROR: Menu action not found.");
-			}else{
-				string@[] parts = split(key,";");
-				bool isTagged = false;
-				for(uint pos = 0, length = parts.length; pos<length; pos++){
-					if(parts[pos][0] == "@"){
-						isTagged = true;
-						string tag = parts[pos];
-						tag[0] = "";
-						if( callback(ScreenX,ScreenY,tag) ) HideScreen(ScreenId);
-						break;
-					}
-				}
-				if(!isTagged) if(callback(ScreenX,ScreenY,null)) HideScreen(ScreenId);
-			}
-		}
-
-		void OnResizeGrid( GUIObject@ cell, uint cellIndex ) override {
-        	this.Id = cellIndex;
-
-        	string@[] caption = splitEx(RegistryKeys[cellIndex],";");
-        	MenuLabel@ label = cast<MenuLabel>(Find("MenuLabel"));
-        	if(caption.length == 1){ // No macros provided
-        		label.SetText(caption[0]);
-        	}else{ // Macros detected
-        		for(uint pos = 0, length = caption.length - 1; pos < length; pos++){
-        			if(caption[pos][0] == "#"){
-        				MenuIcon@ icon = cast<MenuIcon>(Find("MenuIcon"));
-        				string path = caption[pos];
-        				path[0] = "";
-        				icon.SetBackgroundImage(path,IMAGE_LAYOUT_ZOOM);
-        				icon.SetSize(RowHeight-2,RowHeight-2);
-        				break;
-        			}
-        		}
-        		label.SetText(caption[caption.length - 1]);
-        	}
-        }
-
-		void OnHoverChanged() override
-		{
-			MenuLabel@ label = cast<MenuLabel>(Find("MenuLabel"));
-			if(IsHovered){
-				label.SetTextColor( COLOR_WHITE );
-			}else{
-				label.SetTextColor( COLOR_GREEN );
+// Fill context menu with stored conditionals
+void FillContextMenuIf(string hash, Menu& menu) {
+	if (ConditionalItems.exists(hash)) {
+		MenuItem@[]@ actions = cast<MenuItem@[]@>(ConditionalItems[hash]);
+		if (actions.length > 0) {
+			for (uint i = 0; i < actions.length; i++) {
+				menu.Add(actions[i]);
 			}
 		}
 	}
+}
 
-	class MenuLabel: GUIText
-	{
-		void OnConstruct() override {
-			SetNotHittable( true );
-			SetSize(Parent.Width,Parent.Height);
-			SetTextFlags( FT_BORDERED|FT_CENTERY );
-            SetTextColor( COLOR_GREEN );
-            SetText("<Menu item>");
+// Register conditional menu for specific targets (EXPORT)
+// When called on item
+void AddItemContextMenu(MenuItem@ menuItem) {
+	AddContextMenuIf("item",@menuItem);
+}
+// When called on item with proper ProtoId
+void AddItemPidContextMenu(uint16 pid, MenuItem@ menuItem) {
+	AddContextMenuIf("item:pid:" + pid,@menuItem);
+}
+// When called on chosen
+void AddChosenContextMenu(MenuItem@ menuItem) {
+	AddContextMenuIf("chosen",@menuItem);
+}
+// When called on NPC
+void AddNpcContextMenu(MenuItem@ menuItem) {
+	AddContextMenuIf("npc",@menuItem);	
+}
+// When called on non-NPC
+void AddPlayerContextMenu(MenuItem@ menuItem) {
+	AddContextMenuIf("player",@menuItem);	
+}
+// When called on not alive critter
+void AddDeadContextMenu(MenuItem@ menuItem) {
+	AddContextMenuIf("corpse",@menuItem);	
+}
+// When called on non-item & non-critter (map hex)
+void AddHexContextMenu(MenuItem@ menuItem) {
+	AddContextMenuIf("hex",@menuItem);
+}
+
+// @@todo expand for more possibilities
+
+// Calls a context menu popup in point X/Y of screen coordinates
+void ContextMenu(int X, int Y) {
+	Menu menu();
+
+	ItemCl@    item    = GetMonitorItem(X,Y);
+	CritterCl@ critter = GetMonitorCritter(X,Y);
+
+	FillContextMenu(menu);
+	if (critter !is null) {
+		if (critter.IsChosen()) {
+			FillContextMenuIf("chosen", menu);
 		}
-		void OnInit() override {
-			SetPosition(RowHeight + 3,0);
+		if (critter.IsPlayer()) {
+			FillContextMenuIf("player", menu);	
+		} else if (critter.IsNpc()) {
+			FillContextMenuIf("npc", menu);
+		}
+		if (!critter.IsLife()) {
+			FillContextMenuIf("corpse", menu);
 		}
 	}
 
-	class MenuIcon: GUIPanel
-	{
-		void OnConstruct() override {
-			SetNotHittable( true );
-			SetSize(0,0);
-		}
+	if (item !is null) {
+		FillContextMenuIf("item", menu);
+		FillContextMenuIf("item:pid:" + item.Proto.ProtoId, menu);
 	}
-}*/
+
+	if (item is null && critter is null) {
+		FillContextMenuIf("hex",menu);
+	}
+
+	menu.Popup(X,Y);
+}
+
+// Placeholder menu item/action
+void MenuActionEcho(MenuActionResult@ this) {
+	Message("ACTION: " + this.Action.GetTitle());
+}
