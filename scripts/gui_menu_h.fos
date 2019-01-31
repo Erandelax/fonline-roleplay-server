@@ -8,9 +8,9 @@ Usage example:
 	void Init(){
 		AddContextMenu(MenuAction("Walk here"), @muWalkHere); // Add single menu item
 
-		AddPlayerContextMenu(
+		AddChosenContextMenu(
 			Menu("Self...") 								// Create submenu of items
-				.Add("MenuAction",@muInventory)
+				.Add("Show inventory",@muInventory)
 				.Add("Skills")
 				.Add("First aid",@muSkillFirstAid)
 				.Add("Surgery",@muSkillSurgery)
@@ -230,6 +230,10 @@ class Menu : MenuItem
 		item.SetExpanded(false);
 		this.Items.insertLast(item);
 		return this;
+	}
+
+	Menu@ Add(string title, MenuActionCallback@ action) {
+		return this.Add(MenuAction(title,@action));
 	}
 
 	void Popup(int X, int Y) {
