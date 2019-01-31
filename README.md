@@ -1,24 +1,22 @@
-# Dark Paper
+# White Paper
 
-**Dark Paper** is a dark theme for Jekyll. It is a sister theme of [white-paper](https://github.com/vinitkumar/white-paper). If you like light colored themes, you can check white-paper. 
+**White Paper** is a theme for Jekyll. It is built keeping content in focus and is best for writers/developers who also like to share code with their essays.
 
-It is built keeping content in focus and is best for writers/developers who also like to share code with their essays.
+## Note: Dark Paper out now
 
-# Dark Paper in Action
+> Inspired by MacOS dark mode, a new dark theme is out now. Check out [Dark Paper github](https://github.com/vinitkumar/dark-paper) and it's live demo here: [dark paper website](https://vinitkumar.me/dark-paper)
 
-- Home page
+# White Paper in Action
 
-![home](https://cldup.com/4InBDLTCCt-3000x3000.png)
+### Home page
 
-- Profile page
+![home](https://cldup.com/nAr0lOBTTJ.png)
 
-![profile](https://cldup.com/moj9AEh6iF-3000x3000.png)
+### Post Detail View
 
-- Post Detail View
+![post detail](https://cldup.com/kP54KLISpn-3000x3000.png)
 
-![post detail](https://cldup.com/hXI9IqSSm2-3000x3000.png)
-
-## How to use Dark Paper
+## How to use White Paper
 
 Fork the repo to your account by clicking the button on the top right as shown in the image:
 
@@ -106,7 +104,7 @@ concat: {
 * see [LICENSE](https://github.com/vinitkumar/white-paper/blob/gh-pages/LICENSE) file
 
 ## Version
-* Version 1.0.0
+* Version 4.0.0
 
 ## Contact
 #### Developer
