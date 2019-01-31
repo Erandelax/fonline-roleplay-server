@@ -1,24 +1,65 @@
 // by Erandelax aka Sjaman 24/10/2018
 funcdef void MenuActionCallback(int,int,MenuAction@);
 
+#include "gui_h.fos"
 #include "_client_defines.fos"
-
-/*#ifndef __GUI_MENU__
-import void ShowMenu(dictionary@,int,int) from "gui_menu";
-import MenuActionCallback@ MenuAction(MenuActionCallback@) from "gui_menu";
-#endif*/
 
 interface MenuItem
 {
-	void Invoke(int,int);
+	void Click(int,int);
+	
 	bool IsStatic();
+	bool IsExpanded();
+
 	string GetTitle();
-} 
+	string GetIcon();
+	int    GetSize();
+	MenuItem@ GetItem(uint,uint&);
+	MenuItem@ GetItem(uint);
+
+	void SetExpanded(bool);
+}
 
 class MenuAction : MenuItem
 {
 	protected string Title;
 	protected MenuActionCallback@ Action;
+
+	string GetTitle() {
+		return this.Title;
+	}	
+
+	string GetIcon() {
+		return "";
+	}
+
+	int GetSize() {
+		return 1;
+	}
+
+	MenuItem@ GetItem(uint skip, uint& skip2) {
+		return cast<MenuItem>(this);
+	}
+
+	MenuItem@ GetItem(uint skip) {
+		return cast<MenuItem>(this);	
+	}
+
+	void SetExpanded(bool state) {
+		return;
+	}
+
+	bool IsStatic() {
+		return null is this.Action;
+	}
+
+	bool IsExpanded() {
+		return false;
+	}
+
+	void Click(int X, int Y) {
+		Message("CLICK:"+X+"/"+Y);
+	}
 
 	MenuAction(string title, MenuActionCallback@ action) {
 		this.Title = title;
@@ -33,45 +74,77 @@ class MenuAction : MenuItem
 	MenuAction(string title) {
 		this.Title = title;
 	}
-
-	string GetTitle() {
-		return this.Title;
-	}
-
-	void Invoke(int x ,int y){
-		Message("INVOKED2 "+x + ":"+y);
-	}
-
-	bool IsStatic() {
-		return this.Action is null;
-	}
 }
 
 class Menu : MenuItem
 {
 	protected string Title;
 	protected MenuItem@[] Items;
-	protected int X = 0;
-	protected int Y = 0;
+	protected bool Expanded = true;
 
-	Menu(string title) {
-		this.Title = title;
-	}
-
-	uint GetSize(){
-		return this.Items.length;
+	MenuItem@ GetItem(uint id, uint& depth) {
+		/* Don't ask me how it works. Black recursive magic
+			- item (0 <=> 0), size 1
+			- submenu (1 <=> 1), size 3
+				= subitem (1:0 <=> 2), size 1
+				= subitem (1:1 <=> 3), size 1
+			- item (2 <=> 4), size 1
+			- submenu (3 <=> 5), size 3
+				= subitem (3:0 <=> 6), size 1
+				= subitem (3:1 <=> 7), size 1
+			- item (4 <=> 8), size 1
+			- item (5 <=> 9), size 1
+		*/
+		uint pos = 0, parentPos = 0, nextParentPos = 0, size = 0, lastPos = 0;
+		while (pos < this.Items.length && parentPos != id && nextParentPos < id) {
+			parentPos = nextParentPos;
+			lastPos = pos;
+			size = this.Items[pos].GetSize();
+			nextParentPos += size;
+			pos++;
+		}
+		if (nextParentPos == id) {
+			return this.Items[pos];
+		} 
+		else {
+			depth++;
+			return this.Items[lastPos].GetItem(id - parentPos - 1, depth);
+		}
 	}
 
 	MenuItem@ GetItem(uint id) {
-		return this.Items[id];
+		uint skip = 0;
+		return this.GetItem(id,skip);
+	}
+
+	int GetSize() {
+		int result = 1;
+		if (this.IsExpanded()) {
+			for (uint i = 0; i < this.Items.length; i++) {
+				result += this.Items[i].GetSize();
+			}
+		} 
+		return result;
+	}
+
+	string GetTitle() {
+		return this.Title;
+	}
+
+	string GetIcon() {
+		return "";
+	}
+
+	void SetExpanded(bool state) {
+		this.Expanded = state;
 	}
 
 	Menu@ Add(string title) {
-		this.Add(MenuAction(title));
-		return this;
+		return this.Add(MenuAction(title));
 	}
 
 	Menu@ Add(MenuItem@ item) {
+		item.SetExpanded(false);
 		this.Items.insertLast(item);
 		return this;
 	}
@@ -80,55 +153,57 @@ class Menu : MenuItem
 		GUIPopupMenu::Init(X,Y,@this);
 	}
 
-	void Invoke(int X, int Y){
-		this.Popup(X,Y);
-		return;
+	void Click(int X, int Y) {
+		this.SetExpanded(!this.Expanded);
 	}
 
-	string GetTitle() {
-		return this.Title + "...";
+	bool IsExpanded() {
+		return this.Expanded;
 	}
 
 	bool IsStatic() {
-		return false;
+		return 0 == this.Items.length;
+	}
+
+	Menu(string title) {
+		this.Title = title;
+		this.Items.resize(0);
 	}
 }
 
-namespace GUIPopupMenu
+namespace GUIPopupMenu 
 {
-
 	void Init(int X, int Y, Menu@ menu) {
 		// Get existing or create new popup menu screen
-		Screen@ _screen = cast<Screen>( GUI_GetScreen(CLIENT_SCREEN_POPUP_MENU) );
+		MenuScreen@ _screen = cast<MenuScreen>( GUI_GetScreen(CLIENT_SCREEN_POPUP_MENU) );
 
 		if (_screen is null) {
-			@_screen = Screen();
+			@_screen = MenuScreen();
 			_screen.Init(null);
 			GUI_RegisterScreen(CLIENT_SCREEN_POPUP_MENU, _screen);
 		}
 
-		// Fill with data
-		MenuGrid _grid();
-		MenuItem _item();
-		Label _label();
-		Icon _icon();
+		// Fill it with data
+		MenuGrid  _grid();
+		MenuItem  _item();
+		MenuLabel _label();
+		MenuIcon  _icon();
 		_label.Init(_item);
 		_icon.Init(_item);	
 		_item.Init(_grid);
 		_grid.Init(_screen);
 		_grid.SetPosition(X,Y);	
-
 		_grid.SetMenu(@menu);		
 
 		ShowScreen(CLIENT_SCREEN_POPUP_MENU);
 	}
 
-	class Screen : GUIScreen
+	class MenuScreen : GUIScreen
 	{
 		void OnConstruct() override {
 			SetPosition(0,0);
 			SetDock(DOCK_FILL);
-			SetSize(__ScreenWidth, __ScreenHeight);
+			SetSize(__ScreenWidth,__ScreenHeight);
 		}
 
 		void OnMouseDown(int button) override {
@@ -140,10 +215,10 @@ namespace GUIPopupMenu
 	class MenuGrid : GUIGrid
 	{
 		::Menu@ Menu;
-		bool IsScrollable = false;
+		bool Scrollable = false;
 		int ScrollOffset = 0;
-		int MaxOffset = 0;
-		int OffsetRange = 10;
+		int ScrollLimit = 0;
+		int ScrollRange = 12;
 
 		void OnConstruct() override {
 			this.SetCellPrototype("MenuItem");
@@ -151,20 +226,29 @@ namespace GUIPopupMenu
 
 		void SetMenu(::Menu@ menu) {
 			@this.Menu = menu;
-			uint size = menu.GetSize();
-			if (size > this.OffsetRange) {
-				this.ResizeGrid(this.OffsetRange);
-				this.IsScrollable = true;
-				this.MaxOffset = size - this.OffsetRange;
-			} else {
-				this.ResizeGrid(size);
+			int size = menu.GetSize();
+			this.Update();
+		}
+
+		void Update() {
+			if (null !is this.Menu) {
+				int size = this.Menu.GetSize();
+				if (size <= this.ScrollRange) {
+					this.Scrollable = false;
+					this.ScrollLimit = size;
+					this.ResizeGrid(size);
+					return;
+				}
+				this.Scrollable = true;
+				this.ScrollLimit = size - this.ScrollRange;
 			}
+			this.ResizeGrid(this.ScrollRange);
 		}
 	}
 
-	class MenuItem : GUIPanel 
+	class MenuItem : GUIPanel
 	{
-		bool IsStatic = false;
+		bool Static = false;
 
 		void OnConstruct() override {
 			this.SetSize(100,13);
@@ -172,52 +256,60 @@ namespace GUIPopupMenu
 
 		void OnMouseDown(int button) override {
 			MenuGrid@ parent = cast<MenuGrid>(Parent);
-			if (button == MOUSE_BUTTON_WHEEL_UP || button == MOUSE_BUTTON_WHEEL_DOWN) {
-				if (parent.IsScrollable) {
-					if (button == MOUSE_BUTTON_WHEEL_UP) {
+			if (MOUSE_BUTTON_WHEEL_UP == button || MOUSE_BUTTON_WHEEL_DOWN == button) {
+				if (parent.Scrollable) {
+					if (MOUSE_BUTTON_WHEEL_UP == button) {
 						if (parent.ScrollOffset > 0) {
 							parent.ScrollOffset--;
-							parent.ResizeGrid(parent.OffsetRange);
+							parent.Update();
 						}
-					} else {
-						if (parent.ScrollOffset < parent.MaxOffset - 1) {
+					} 
+					else {
+						if (parent.ScrollOffset < parent.ScrollLimit - 1) {
 							parent.ScrollOffset++;
-							parent.ResizeGrid(parent.OffsetRange);
+							parent.Update(); 
 						}
 					}
 				}
-			} else {
+			} 
+			else {
 				::MenuItem@ item = parent.Menu.GetItem(parent.ScrollOffset + this.CellIndex);
-				if (item !is null && !this.IsStatic) {
-					item.Invoke(_AbsolutePosX + _Width,_AbsolutePosY);
+				if (null !is item && !this.Static) {
+					item.Click(_AbsolutePosX, _AbsolutePosY);
+					parent.Update();
 				}
 			}
 		}
 
 		void OnResizeGrid( GUIObject@ cell, uint cellIndex ) override {
 			MenuGrid@ parent = cast<MenuGrid>(Parent);
-			Label@ label = cast<Label>( this.Find("Label") );
-			::MenuItem@ item = parent.Menu.GetItem(parent.ScrollOffset + cellIndex);
-			
-			this.IsStatic = item.IsStatic();
-			label.SetText( item.GetTitle() );
+			MenuLabel@ label = cast<MenuLabel>( this.Find("MenuLabel") );
+			if (null !is parent.Menu) {
+				uint depth = 0;
+				::MenuItem@ item = parent.Menu.GetItem(parent.ScrollOffset + cellIndex, depth);	
+				this.Static = item.IsStatic();
+				label.SetText( item.GetTitle() );
+				label.SetPosition(depth * 12,0);
 
-			if (this.IsStatic) label.SetTextColor( COLOR_RED );
+				if (this.Static) {
+					label.SetTextColor( COLOR_RED );
+				}
+			}
 		}
 
 		void OnHoverChanged() override {
-			Label@ label = cast<Label>(Find("Label"));
+			MenuLabel@ label = cast<MenuLabel>(Find("MenuLabel"));
 
-			if (IsHovered) {
+			if (this.IsHovered) {
 				label.SetTextColor( COLOR_WHITE );
 			}
 			else {
-				label.SetTextColor( this.IsStatic ? COLOR_RED : COLOR_GREEN );
+				label.SetTextColor( this.Static ? COLOR_RED : COLOR_GREEN );
 			}
 		}
 	}
 
-	class Label : GUIText 
+	class MenuLabel : GUIText 
 	{
 		void OnConstruct() override {
 			this.SetNotHittable(true);
@@ -232,7 +324,7 @@ namespace GUIPopupMenu
 		}
 	}
 
-	class Icon : GUIPanel
+	class MenuIcon : GUIPanel
 	{
 		void OnConstruct() override {
 			this.SetNotHittable( true );
