@@ -12,3 +12,14 @@
 .highlight .err{
 	border:none;
 }
+.listing .post.other h2 a,
+.listing .post h2 a,
+a{
+	color: #8a996e;
+}
+body, p{
+	color: #434343;
+}
+h1,h2,h3,h4,h5,h6{
+	color: #687252;
+}
