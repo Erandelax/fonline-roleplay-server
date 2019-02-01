@@ -5,7 +5,7 @@ about: >
     Heavy roleplay oriented FOnline SDK v476 build
 
 master_repo: false
-# url: "/"
+url: "/fonline-roleplay-server"
 markdown: redcarpet
 redcarpet:
   extensions: ["tables", "fenced_code_blocks","strikethrough","autolink"]
