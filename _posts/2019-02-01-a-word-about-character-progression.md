@@ -9,13 +9,13 @@ categories: Devblog Concepts
 
 ![Character screen](https://res.cloudinary.com/drpez49fp/image/upload/v1549032413/Progression.png)
 
-There is a set of basic skill lines (melee/ranged combat, etc). Each skill have has the corresponding *static* and *dynamic* parts. 
+There is a set of basic skill lines (melee/ranged combat, etc). Each skill have the corresponding *static* (green) and *dynamic* (yellow) parts. 
 
 Dynamic part of each skill is slowly developed every time you perform an action related to this skill. And - slowly degrades in time on itself. 
 
 Static part does not change on itself and never decreases. The reason you have it is that dynamic part will stop to autodecrease as soon as it becomes equal or less than the static part. Still, that is not its "minimum level" because some debuffs might actually make dynamic part to have less points than the static one contains.
 
-Each skill have several ability rows. Abilities (ex Perks) might alter your character stats (passive abs) or give you some new interaction possibilities (like disarming, stunning or weapon breaking active abilities). Each ability might have several progression levels altering their effects. 
+Each skill have several ability rows. Abilities (ex perks) might alter your character stats (passive abs) or give you some new interaction possibilities (like disarming, stunning or weapon breaking active abilities). Each ability might have several progression levels altering their effects. 
 
 Each ability has active part level requirement you must achieve before you can obtain it. Should be noted, that if you already have that ability and your active skill level drops lower than its requirement *ability effect will be altered*, so that actual passive ability buff might become debuff and active ability use attempt might get you hurt. 
 
