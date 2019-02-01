@@ -1,0 +1,14 @@
+.modified:before{
+	content:" ... ";
+}
+.post-date .tags:before,
+.post-date .lang:before{
+	content:"| ";
+}
+
+.post-date .tags span:not(:last-of-type):after{
+	content:", ";
+}
+.highlight .err{
+	border:none;
+}

@@ -1,17 +1,19 @@
 name: FOnline Roleplay
 description: >
-    Heavy roleplay oriented FOnline SDK v476 build.
+    FOnline Roleplay
 about: >
-    FOnline Roleplay Website.
+    Heavy roleplay oriented FOnline SDK v476 build
 
 master_repo: false
 # url: "/"
-markdown: kramdown
+markdown: redcarpet
+redcarpet:
+  extensions: ["tables", "fenced_code_blocks","strikethrough","autolink"]
 highlighter: rouge
 
 gems: ['jekyll-paginate', 'jekyll-gist', 'jekyll-feed']
 
-paginate: 4
+paginate: 2
 
 logo:             logo.png
 disqus_shortname:

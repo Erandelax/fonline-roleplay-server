@@ -1,12 +1,27 @@
 ---
 layout: default
-title: A guide to your digital life
+title: FOnline Roleplay Website
 ---
 <div class="listing">
     {% for post in paginator.posts %}
     <div class="post other link">
-      <h2></span> <a href="{{site.url}}{{post.url}}">{{ post.title }}</a></h2>
-      <p class="post-date">{{ post.date | date_to_string }}</p>
+      <h2><a href="{{site.url}}{{post.url}}">{{ post.title }}</a></h2>
+      <p class="post-date">
+      	<span class="created">{{post.date | date: "%d/%m/%Y"}}</span>{% if post.modified %}<span class="modified">{{post.modified | date: "%d/%m/%Y"}}</span>{% endif %}
+        {% if post.lang %}
+        <span class="lang">{{post.lang | upcase }}</span>
+        {% else %}
+        <span class="lang">EN</span>
+        {% endif %}
+
+        {% if post.tag %}
+        <span class="tags">
+          {% for tag in post.categories %}
+          <span>{{tag}}</span>
+          {% endfor %}
+        </span>
+        {% endif %}
+      </p>
       {{ post.excerpt }}
     </div>
     {% endfor %}
