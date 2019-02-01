@@ -17,7 +17,7 @@
 a{
 	color: #8a996e;
 }
-body, p{
+ul.nav li a, body, p{
 	color: #434343;
 }
 h1,h2,h3,h4,h5,h6{
