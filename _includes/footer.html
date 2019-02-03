@@ -4,34 +4,26 @@
 <div class="pagination">
   {% if paginator.previous_page %}
     {% if paginator.page == 2 %}
-      <a href="{{site.url}}/" class="newer">
-        <span class="mega-octicon octicon-playback-{% if site.rtl %}rewind{% else %}fast-forward{% endif %}" style="min-width: 32px;">
-          See previous
-        </span>
+      <a href="{{site.url}}/" class="disabled">
+        Previous
       </a>
     {% else %}
       <a href="{{site.url}}/page{{paginator.previous_page}}" class="newer"><span class="mega-octicon octicon-playback-{% if site.rtl %}rewind{% else %}fast-forward{% endif %}" style="min-width: 32px;"></span></a>
     {% endif %}
   {% else %}
-    <span class="previous">
-      <span class="mega-octicon octicon-playback-{% if site.rtl %}rewind{% else %}fast-forward{% endif %}" style="min-width: 32px;">
-        See previous
-      </span>
-    </span>
+    <a class="disabled" href="#">
+      Previous
+    </a>
   {% endif %}
   
   {% if paginator.next_page %}
-    <a href="{{site.url}}/page{{paginator.next_page}}" class="older">
-      <span class="mega-octicon octicon-playback-{% if site.rtl %}fast-forward{% else %}rewind{% endif %}" style="min-width: 32px;">
-        See next
-      </span>
+    <a href="{{site.url}}/page{{paginator.next_page}}" class="disabled">
+      Next
     </a>
   {% else %}
-    <span class="next">
-      <span class="mega-octicon octicon-playback-{% if site.rtl %}fast-forward{% else %}rewind{% endif %}" style="min-width: 32px;">
-          See next
-      </span>
-    </span>
+    <a class="disabled" href="#">
+      Next
+    </a>
   {% endif %}
 </div>
 {%  endif %}

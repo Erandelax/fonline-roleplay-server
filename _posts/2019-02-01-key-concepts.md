@@ -3,6 +3,8 @@ layout: post
 title: "Key concepts"
 date: 01-02-2019
 categories: Devblog
+description: |
+  In short about plans, character progression, character effects, weapons, weather, global map and AI.
 ---
 So, let's highlight a few key concepts that I really want to achieve during development.
 

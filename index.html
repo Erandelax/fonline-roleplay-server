@@ -5,24 +5,29 @@ title: FOnline Roleplay Website
 <div class="listing">
     {% for post in paginator.posts %}
     <div class="post other link">
-      <h1><a href="{{site.url}}{{post.url}}">{{ post.title }}</a></h1>
-      <p class="post-date">
-      	<span class="created">{{post.date | date: "%d/%m/%Y"}}</span>{% if post.modified %}<span class="modified">{{post.modified | date: "%d/%m/%Y"}}</span>{% endif %}
-        {% if post.lang %}
-        <span class="lang">{{post.lang | upcase }}</span>
-        {% else %}
-        <span class="lang">EN</span>
-        {% endif %}
+      <p>
+        <a href="{{site.url}}{{post.url}}">
+          {{ post.title }}
+        </a>
+        <span class="post-date">
+          <span class="created">{{post.date | date: "%d/%m/%Y"}}</span>{% if post.modified %}<span class="modified">{{post.modified | date: "%d/%m/%Y"}}</span>{% endif %}
+          {% if post.lang %}
+          <span class="lang">{{post.lang | upcase }}</span>
+          {% else %}
+          <span class="lang">EN</span>
+          {% endif %}
 
-        {% if post.tag %}
-        <span class="tags">
-          {% for tag in post.categories %}
-          <span>{{tag}}</span>
-          {% endfor %}
+          {% if post.tag %}
+          <span class="tags">
+            {% for tag in post.categories %}
+            <span>{{tag}}</span>
+            {% endfor %}
+          </span>
+          {% endif %}
         </span>
-        {% endif %}
       </p>
-      {{ post.excerpt }}
+      <p style="margin-left:1em">{{ post.description }}</p>
+      {% comment %}{{ post.excerpt }}{% endcomment %}
     </div>
     {% endfor %}
 </div>

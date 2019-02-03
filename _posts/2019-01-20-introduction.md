@@ -2,6 +2,8 @@
 layout: post
 title: "Introduction"
 date: 20-01-2019
+description: |
+  Who am I, what's FOnline and its roleplay servers.
 categories: Devblog
 ---
 

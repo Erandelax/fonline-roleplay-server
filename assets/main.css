@@ -24,24 +24,35 @@ a, input, textarea, img, iframe, video {
 }
 h1,h2,h3,h4,h5,h6{
     font-weight:normal;
-    font-size:1.1em;
+    font-size:1em;
     color:#0f0;
-    margin-top:2em;
+    margin-top:1em;
 }
-h2:before{
+h1:before{
     content:"# ";
 }
-h3:before{
+h2:before{
     content:"## ";
 }
-h4:before{
+h3:before{
     content:"### ";
 }
-h5:before{
+h4:before{
     content:"#### ";
 }
-h6:before{
+h5:before{
     content:"##### ";
+}
+h6:before{
+    content:"###### ";
+}
+h1:before,
+h2:before,
+h3:before,
+h4:before,
+h5:before,
+h6:before{
+    color:#070;
 }
 
 /* Animations */
@@ -76,8 +87,8 @@ h6:before{
 header{
 	margin-top:2em;
 }
-.container{
-	margin-bottom:2em;
+.container:last-of-type{
+	margin-bottom:4em;
 }
 header .top-link{
 	font-size:2em;
@@ -106,6 +117,10 @@ a:after{
 }
 a:empty:before,a:empty:after{
     content: "";
+}
+a.disabled{
+    color:#040;
+    pointer-events: none;
 }
 img, iframe, video, pre{
     filter:contrast(0.6) sepia(1) brightness(.7) contrast(1.5) hue-rotate(60deg) saturate(5) brightness(.75);
@@ -189,3 +204,17 @@ html.with-effects body:before{
 .highlight span.c1{
 	color:#777;
 }	
+.pagination{
+    text-align:right;
+    margin-top:2em;
+}
+.post-date{
+    font-size:1em;
+    color:#070;
+}
+p{
+    text-align:justify;
+}
+p img, i video, p iframe, p pre{
+    max-width:100%;
+}

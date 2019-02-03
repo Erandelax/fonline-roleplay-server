@@ -3,6 +3,7 @@ layout: post
 title: "A word about character progression"
 date: 01-02-2019 17:00:00
 categories: Devblog Concepts
+description: Character skill window concept, character stats, a word about weapons and damage types.
 ---
 
 ## Skills and abilities

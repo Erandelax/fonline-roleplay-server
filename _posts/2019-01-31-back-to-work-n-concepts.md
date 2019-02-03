@@ -3,6 +3,8 @@ layout: post
 title: "Back to work"
 date: 31-01-2019
 categories: Devblog
+description: |
+  Popup menus, ol' new shooter & non-targeting combat controls in FOnline.
 ---
 
 After a long break, I'm back to FOnline development! Spent dozen of hours fixing own `input.fos` (keyboard & mouse controls handler script) and `gui_menu.fos` (visual menus).
