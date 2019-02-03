@@ -41,20 +41,73 @@ When character' physical health reaches zero, it falls into critical state. In t
 
 When your character' mental health reaches zero you can't perform crafting or any other mental activities and every second you have a chance to drop into states of rage (randomly attacks anyone around) or panic (can't fight, falls down with the same evasion bonuses as in critical state, but not so deadly). Also, it'll take much more time to perform any action than usual.
 
-### Damage types, evasion
+All abilities are considered as skills and will have their own ability rows.
 
-For now I'm stuck with slicing, crushing, thermal, mental, radiation and biochemical damage types. Slicing stands for all kinds of knifes, teeth and high penetration ammo. Crushing - blunt melee weapons, low penetration/high caliber rounds. Thermal comes from fire, electricity, laser and plasma damage. Radiation - specific laser/plasma weapons and environment radiation sources. Biochemical - ilnesses, some injuries, poisons and neurotoxins. Mental damage affects only mental health and is recieved every time you or your teammates are hit as well as just comes randomly in time during any fight. 
+### Skills & ability rows
 
-Each weapon might have more than one damage type as well as each armor might give you protection against more than one of those.
+Innate skills:
 
-All damage below the damage threshold is applied only to your armor HP (after being divided damage resistance). When your armor item breaks damage threshold drops to zero and you are left just with your natural damage resistances. If incoming damage is higher than armor damage threshold, part of it will be applied to your character health (again, after being divided by your + armor damage resistance).
+- Strength 
+- Endurance
+- Agility 
+- Charisma
+- Perception
+- Intelligence 
+- Willpower
 
-You can completely block incoming damage from melee attacks with "melee block" ability (given that u manage to activate it in time to interupt the attack). Given enough skills your character might evade melee attacks on itself. 
+Acquired skills:
 
-Ranged attack can not be evaded or blocked that way. With non-targeting combat it is much harder to actually hit someone at range (projectile has to cross you character to be considered a hit). Use cover, shoot around the corners and wear armor.
-
-In general, I want to achieve "rock-paper-scissors" state when melee attackers are most effective against ranged shooters (of course not in clear sight), ranged shooters - agains close range shooters and close range shooters - against melees.
-
-### Carrying objects around
-
-I demand to split "maximum weight limit" into actual hand carrying and whole gear hauling limits. First one affects how much weight you can carry in your hand slots, second - how much things you can carry in your inventory and equipment (armor) slot. Carrying is mostly affected by strength, hauling - endurance. 
+- Melee combat
+  - Unarmed fight
+  - Blunt weapons
+  - Piercing weapons
+  - Cutting weapons
+  - Throwing weapons
+- Ranged combat
+  - Pistols
+  - SMGs
+  - Shotguns
+  - Rifles
+  - Assault rifles
+  - Machineguns
+  - Firearms
+  - Beam weapons
+  - Plasma weapons
+  - Artillery (mortairs, rocket launchers, target lighting)
+- Infiltration 
+  - Disguise
+  - Lockpick
+  - Hacking
+  - Pickpocket
+  - Traps
+- Leadership
+  - Commanding (squad management & NPC controls)
+  - Persuasion (trading, recruiting bonuses, mental buffs creation)
+  - Intimidation (mental damage & debuffs creation)
+- Medicine
+  - Gutting (corpse resource extraction)
+  - First aid (in-combat healing)
+  - Treatment (long term illnesses treatment)
+  - Surgery (serious wounds treatment, implantation)
+- Engineering
+  - Dismantling (items & objects resource extraction)
+  - Melee weapons
+  - Ranged weapons
+  - Armors
+  - Biochemicals
+  - Utilites (misc items)
+  - Structures (objects)
+  - Robotics (turrets & robots)
+- Science
+  - Researching (get more info about environment, find out recipes for items)
+  - Mechanics (+ next ones - various item crafting and decrafting buffs)
+  - Electronics
+  - Physics
+  - Biology
+  - Chemistry
+- Survival
+  - Exploration (get more info about environment & enemies at global map)
+  - Navigation (global map buffs)
+  - Cooking
+  - Taming
+  - Growing

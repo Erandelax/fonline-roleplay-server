@@ -50,6 +50,24 @@ Not sure yet if I want it, but firing guns might actually drop ammo cases & requ
 
 And yeah. It makes no sense to bring a knife for firefight unless you are really close to the enemy. But - I want to add a full variety of melee fight abilities, including disarming and stunning, so melees would not be so useless after all.
 
+## Damage types, evasion and armoring
+
+For now I'm stuck with slicing, crushing, thermal, mental, radiation and biochemical damage types. Slicing stands for all kinds of knifes, teeth and high penetration ammo. Crushing - blunt melee weapons, low penetration/high caliber rounds. Thermal comes from fire, electricity, laser and plasma damage. Radiation - specific laser/plasma weapons and environment radiation sources. Biochemical - ilnesses, some injuries, poisons and neurotoxins. Mental damage affects only mental health and is recieved every time you or your teammates are hit as well as just comes randomly in time during any fight. 
+
+Each weapon might have more than one damage type as well as each armor might give you protection against more than one of those.
+
+All damage below the damage threshold is applied only to your armor HP (after being divided damage resistance). When your armor item breaks damage threshold drops to zero and you are left just with your natural damage resistances. If incoming damage is higher than armor damage threshold, part of it will be applied to your character health (again, after being divided by your + armor damage resistance).
+
+You can completely block incoming damage from melee attacks with "melee block" ability (given that u manage to activate it in time to interupt the attack). Given enough skills your character might evade melee attacks on itself. 
+
+Ranged attack can not be evaded or blocked that way. With non-targeting combat it is much harder to actually hit someone at range (projectile has to cross you character to be considered a hit). Use cover, shoot around the corners and wear armor.
+
+In general, I want to achieve "rock-paper-scissors" state when melee attackers are most effective against ranged shooters (of course not in clear sight), ranged shooters - agains close range shooters and close range shooters - against melees.
+
+## Carrying objects around
+
+I demand to split "maximum weight limit" into actual hand carrying and whole gear hauling limits. First one affects how much weight you can carry in your hand slots, second - how much things you can carry in your inventory and equipment (armor) slot. Carrying is mostly affected by strength, hauling - endurance. 
+
 ## Weather
 
 Global weather. As minimum, the whole map will have 3-4 storms moving around on themselves and dropping rains of varying severity at neighboring locations. 

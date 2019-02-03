@@ -60,7 +60,9 @@ Looks relatively cool (at least, comparing to old icon based hold-n-scroll conte
 
 ## Shooter mode controls & Non-targeting combat
 
-That's just a progress since October (from the Long Journey project). Turn on subtitles visibility for the first one if u need more details.
+That's just a progress since October (from the Long Journey project). On its way to get reworked from scratch.
+
+Turn on subtitles visibility for the first one if u need more details. 
 
 <iframe width="100%" height="400px" src="https://www.youtube.com/embed/JyKKjhA_06w" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

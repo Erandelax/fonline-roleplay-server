@@ -25,13 +25,13 @@ Few really cool novelties were introduced in session-based done by [@Pigboss](ht
 
 For more than five years.
 
-So you can believe how excited I was when at last September [@VVish](https://github.com/orgs/fonline-long-journey/people/VVisher) invited me to participate in the [(Long Journey)](https://github.com/fonline-long-journey/) project. Sadly, theorem "if you don't start the game session after one month of the development" got confirmed... Again. So, at the December I quit and the project went into "frozen" state. Fortunately, unlike other game sessions, this build was originally planned as an open-source, so anyone can take it at the project [Github](https://github.com/fonline-long-journey) and carry on in any direction.
+So you can believe how excited I was when at last September [@VVish](https://github.com/orgs/fonline-long-journey/people/VVisher) invited me to participate in the [(Long Journey)](https://github.com/fonline-long-journey/) project. Sadly, theorems "if you don't start the game session after one month of the development" + "every FOnline scripter burns out after a few months" got confirmed... Again. So, at the December I quit and the project went into "frozen" state. Fortunately, unlike other game sessions, this build was originally planned as an open-source, so anyone can take it at the project [Github](https://github.com/fonline-long-journey) and carry on in any direction.
 
 ## Now
-One of the reasons I quit was that I never really liked the idea of making the "game server/session". FOnline SDK is too far from acceptable for comfortable roleplaying (despite the fact that many will say that for this they need just a chat line) to have an idea like that.
+One of the reasons I quit was that I never really liked the idea of making the "game server". FOnline SDK is too far from acceptable level for comfortable roleplaying (despite the fact that many will say that for this they need just a chat line) and I'm too far from being sure that I'd not quit the whole FOnliny thing halfway to join any devteams right now.
 
-So, what I really wanted all of this time was to develop a relatively clean-state FOnline Roleplaying SDK build which could replace that old TNF monster for anyone planning to start his own game session.
+What I really want to do no is to develop a relatively clean-state FOnline Roleplaying SDK build which could replace that old TNF monster while being more RP-applicable than 476* TLA build, so that anyone could just take it, change some config values and maps and will be good to go.
 
-And of course, who am I fooling, most of all I want to check and proof viability of few own core mechanic concepts. Something just. *Really new*.
+And of course, who am I fooling, most of all I want to check and proof viability of few own core mechanics. Something just. *Really new*. And really fit to my own taste.
 
-Not sure how much time it might take, tho.
+Just beware that it might take years or I'll just quit few month later.
