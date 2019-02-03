@@ -12,6 +12,8 @@ body{
     max-width: 720px;
     margin:0 auto;
     color:#080;
+    padding-left:1em;
+    padding-right:1em;
 }
 h1,h2,h3,h4,h5,h6{
     font-weight:normal;
