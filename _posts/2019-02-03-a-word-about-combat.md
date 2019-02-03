@@ -85,7 +85,7 @@ you prior to other targets. Use silenced weapons to neglect that.
 ## Bullets, laser or plasma 
 
 Bullets cause piercing and crushing damage. Laser causes various blinding effects,
-crushing, thermal and radiation damage (which varies from non lethal blinding guns
+crushing, thermal and radiation damage (vary from non lethal blinding guns
 to heavy laser rifes causing explosions on hit). Plasma guns cause high AOE 
 thermal damage and huge mental one on each hit. Flamethrowers are considered 
 plasma weapons.
