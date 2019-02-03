@@ -40,7 +40,7 @@ if (window.baffle) {
         options = {speed: 50, characters: "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" },
         delay = 0; 
         i < els.length; 
-        i++, delay += 40
+        i++, delay += 50
     ) {
         if (els[i].nodeValue.trim()) {
             baffle(els[i]).set(options).reveal(50 + delay)
