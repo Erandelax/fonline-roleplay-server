@@ -22,6 +22,20 @@ Each ability has active part level requirement you must achieve before you can o
 
 I aim to remove both perk and skill points from the game - both for increasing the passive part level and buying abilities you will spend your character experience points. Each next level of passive part, each next level of the ability and each next ability in the row (by the way, you can buy 'em in random order) costs more than previous one. And yeah, you can raise your passive skill part only in range of the active one (otherwise experience cost of such action will be enormous).
 
+## Experience
+
+You can get experience points from completing quests and contracts, participating in fights and events, capturing outposts and just as a EXP transfer from another player or moderator.
+
+Experience can be spent to level up skill static parts, buying abilities, placing contracts or can
+be transfered to another character as token of your appreciation.
+
+Some abilities (like teaching) require some experience to be spent in order to activate it.
+
+Every character earns certain amount of experience every morning. Game moderators and administrators
+can reward your character by increasing that amount of points.
+
+*There wont be such thing as progression levels in a game*.
+
 ## Character stats
 
 I am quite confused about the list of character & item stats. Just note that everything will change more than once about them, so don't take anything too serious.
