@@ -63,9 +63,7 @@ h6:before{
   to {top:140vh}
 }
 
-/* Selections */
-::-moz-selection { color:black;background:#0f0}
-::selection { color:black;background:#0f0}
+
 
 /* Scrollbars */
 ::-webkit-scrollbar {
