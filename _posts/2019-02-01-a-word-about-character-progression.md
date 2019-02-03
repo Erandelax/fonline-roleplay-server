@@ -93,6 +93,7 @@ Acquired skills:
   - Dismantling (items & objects resource extraction)
   - Melee weapons
   - Ranged weapons
+  - Explosives
   - Armors
   - Biochemicals
   - Utilites (misc items)
