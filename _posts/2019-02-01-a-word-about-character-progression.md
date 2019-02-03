@@ -136,3 +136,5 @@ I wont create a full list of abilities for each skill until fully created and te
 - Disguise active ability to make yourself visible as another character for other players.
 - Commanding abilities to create new permanent settlements and outposts on the global map.
 - Structure engineering ability to chose location map (from a set of prebuilts) for such locations.
+- Teaching ability will make everyone around you recieve twice amount of dynamic skill points every time you recieve them (but only while your skill in that area is higher that theirs).
+- Experience transfer will move a certain amount of your experience to targeted character.
