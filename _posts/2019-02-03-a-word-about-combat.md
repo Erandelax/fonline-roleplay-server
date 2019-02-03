@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "A word about combat"
-date: 01-02-2019 20:00:00
+date: 03-02-2019 20:00:00
 categories: Devblog Concepts
 description: Weapons, armor, blocks, evasion, cover, explosives, bullets vs energy projectiles, gas and fire.
 ---
