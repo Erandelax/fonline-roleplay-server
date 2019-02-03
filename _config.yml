@@ -3,6 +3,7 @@ description: >
     FOnline Roleplay
 about: >
     Heavy roleplay oriented FOnline SDK v476 build
+permalink: /:categories/:title
 
 master_repo: false
 #url: "/fonline-roleplay-server"
