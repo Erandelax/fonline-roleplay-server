@@ -13,15 +13,6 @@ body{
     margin:0 auto;
     color:#080;
 }
-/* Custom cursor */
-html, body, ul, input, label {
-    cursor: url('/assets/cursor.png'), pointer;
-}
-a, input, textarea, img, iframe, video {
-	color:#0f0;
-	text-decoration: none;
-	cursor: url('/assets/cursor-inverted.png'), pointer;	
-}
 h1,h2,h3,h4,h5,h6{
     font-weight:normal;
     font-size:1em;
