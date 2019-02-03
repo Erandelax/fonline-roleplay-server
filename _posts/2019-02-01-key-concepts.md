@@ -2,7 +2,7 @@
 layout: post
 title: "Key concepts"
 date: 01-02-2019
-categories: Devblog
+categories: Devblog Concepts
 description: |
   In short about plans, character progression, character effects, weapons, weather, global map and AI.
 ---
