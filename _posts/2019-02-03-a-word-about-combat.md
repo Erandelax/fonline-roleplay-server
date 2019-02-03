@@ -29,11 +29,10 @@ item have, higher the chance is. Only shots taken in front of you can be shielde
 
 Beware some weapons might explode when broken.
 
-## Evasion 
+## Evasion & melee block
 
-Unlike ranged attacks, melee attacks have additional chance to be blocked using
-*melee block* ability, given that u managed to activate it in time, as well as
-can be evaded automatically given that your character have enough agility points.
+Unlike ranged attacks, melee attacks can be completely blocked using
+*melee block* ability, given that u managed to activate it in time. Also there is a small chance attack will be evaded automatically given that your character have enough agility points.
 
 ## Close fight 
 
