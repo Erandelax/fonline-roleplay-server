@@ -59,7 +59,7 @@ Acquired skills:
 
 - Melee combat
   - Unarmed fight
-  - Blunt weapons
+  - Blunt weapons (rifle butt smash included)
   - Piercing weapons
   - Cutting weapons
   - Throwing weapons
@@ -99,7 +99,7 @@ Acquired skills:
   - Utilites (misc items)
   - Structures (objects)
   - Robotics (turrets & robots)
-- Science
+- Science (not sure if I need all of those)
   - Researching (get more info about environment, find out recipes for items)
   - Mechanics (+ next ones - various item crafting and decrafting buffs)
   - Electronics
@@ -111,4 +111,14 @@ Acquired skills:
   - Navigation (global map buffs)
   - Cooking
   - Taming
-  - Growing
+  - Farming (fishing and growing)
+
+## Abilities
+
+I wont create a full list of abilities for each skill until fully created and tested the whole skill-ability system. Tho, there are some of them that I'll try to add one way or another:
+
+- Active unarmed ability to detain and hold critters without ropes or handcuffs.
+- Active blunt weapons ability to break down or knock out the opponent's weapon.
+- Disguise active ability to make yourself visible as another character for other players.
+- Commanding abilities to create new permanent settlements and outposts on the global map.
+- Structure engineering ability to chose location map (from a set of prebuilts) for such locations.
