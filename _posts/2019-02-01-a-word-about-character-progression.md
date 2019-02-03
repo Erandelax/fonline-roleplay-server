@@ -29,7 +29,7 @@ You can get experience points from completing quests and contracts, participatin
 Experience can be spent to level up skill static parts, buying abilities, placing contracts or can
 be transfered to another character as token of your appreciation.
 
-Some abilities (like teaching) require some experience to be spent in order to activate it.
+Some impactful abilities (like teaching or recruiting) require some experience to be spent in order to activate it.
 
 Every character earns certain amount of experience every morning. Game moderators and administrators
 can reward your character by increasing that amount of points.
