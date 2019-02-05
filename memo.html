@@ -5,6 +5,7 @@ url: memo
 ---
 <br>
 <script type="text/javascript" charset="utf-8" src="https://cdn.jsdelivr.net/gh/ajaxorg/ace-builds@latest/src-min-noconflict/ace.js"></script>
+<script type="text/javascript" src="/assets/vendor/lz-string.min.js"></script>
 <div id="editor" style="min-width:100%;min-height:1em;background:none;opacity:.8">> </div>
 <script>
     var editor = ace.edit("editor", {
@@ -27,10 +28,15 @@ url: memo
     editor.on('blur', function() {
         editor.focus()
     });
-    if (window.localStorage && window.localStorage.getItem("memo")) {
+    if (window.location.hash.length > 0) {
+        var data = LZString.decompressFromEncodedURIComponent(window.location.hash.substr(1));    
+        editor.setValue(data);
+    }
+    else if (window.localStorage && window.localStorage.getItem("memo")) {
         editor.setValue(window.localStorage.getItem("memo"))
-    } else {
-        editor.setValue("# Memo\nType here. Data is stored to browser' storage between sessions.\nPress ctrl+q/e to change UI color.")
+    } 
+    else {
+        editor.setValue("# Memo\nType here. Data is stored to browser' storage between sessions.\nPress `ctrl+q/e` to change UI color.\nPress `ctrl+r` to copy a link for current text.")
     }
     var hue = 0;
     if (window.localStorage && window.localStorage.getItem("hue")) hue = window.localStorage.getItem("hue")
@@ -45,6 +51,16 @@ url: memo
         if (hue > 360) hue = 10;
         document.documentElement.style['filter'] = 'hue-rotate(' + hue + 'deg)';
         if (window.localStorage) window.localStorage.setItem("hue",hue)
+    })
+    editor.commands.bindKey('ctrl-r', function(e){
+        var data = editor.getValue();
+        var cp = LZString.compressToEncodedURIComponent(data);
+        var uri = window.location.href.split("#")[0]+'#' + cp;
+        editor.setValue(uri);
+        editor.selectAll();
+        editor.focus();
+        document.execCommand('copy');
+        editor.setValue(data);
     })
     document.getElementById("html").style['filter'] = 'hue-rotate(0deg)';
     editor.focus()
