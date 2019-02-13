@@ -4,7 +4,7 @@ html, body, ul, input, label {
     cursor: url('/assets/cursor.png'), pointer;
 }
 html {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: monospace;
     color:#0c0;
     background-attachment: fixed;
     animation:fade-in 2s forwards;

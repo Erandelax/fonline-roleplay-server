@@ -18,7 +18,7 @@ url: memo
         highlightActiveLine: false,
         cursorStyle: "smooth",
         fontSize: "16px",
-        fontFamily: "Share Tech Mono",
+        fontFamily: "monospace",
         highlightGutterLine: false,
         showGutter:false,
     })
@@ -31,6 +31,7 @@ url: memo
     if (window.location.hash.length > 0) {
         var data = LZString.decompressFromEncodedURIComponent(window.location.hash.substr(1));    
         editor.setValue(data);
+        document.getElementById("header").remove();
     }
     else if (window.localStorage && window.localStorage.getItem("memo")) {
         editor.setValue(window.localStorage.getItem("memo"))
@@ -62,7 +63,7 @@ url: memo
         document.execCommand('copy');
         editor.setValue(data);
     })
-    document.getElementById("html").style['filter'] = 'hue-rotate(0deg)';
+    document.documentElement.style['filter'] = 'hue-rotate(0deg)';
     editor.focus()
     editor.session.selection.clearSelection();
     editor.execCommand("gotolineend")
