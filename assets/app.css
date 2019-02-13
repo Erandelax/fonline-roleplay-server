@@ -1,10 +1,10 @@
-html, body, ul, input, label {
+html, body, ul, input, label, textarea{
     margin:0; 
     padding:0;
     cursor: url('/assets/cursor.png'), pointer;
 }
 html {
-    font-family: monospace;
+    font-family: "Ubuntu Mono", monospace;
     color:#0c0;
     background-attachment: fixed;
     animation:fade-in 2s forwards;
