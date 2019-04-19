@@ -7,5 +7,5 @@ bool module_init() {
 }
 
 void OnKeydown(Event& event) {
-    Log( "It is alive " + uint(event["key"]) );
+    Log("OK");
 }

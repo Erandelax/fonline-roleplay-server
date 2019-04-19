@@ -1,0 +1,21 @@
+#include "../fonline.fosh"
+
+void module_init() {
+    Log("Extensive logging module initialization...");
+
+    FOnline.On("start", @logStart);
+    FOnline.On("init", @logInit);
+    FOnline.On("finish", @logFinish);
+}
+
+void logStart(Event&){
+    Log("start");
+}
+
+void logInit(Event&){
+    Log("init");
+}
+
+void logFinish(Event&){
+    Log("finish");
+}

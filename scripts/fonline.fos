@@ -93,105 +93,176 @@ bool module_init() {
 // Reserved global functions processing
 ///////////////////////////////////////////////////////////////////////////////
 bool start() {
-    Framework.Dispatch("start");
-
+    FOnline.Dispatch("start");
     return true;
 }
 
 void init() {
-    Framework.Dispatch("init");
+    FOnline.Dispatch("init");
 }
 
 void finish() {
-    Framework.Dispatch("finish");
+    FOnline.Dispatch("finish");
 }
 
 uint loop() {
-    Framework.Dispatch("loop");
+    FOnline.Dispatch("loop");
     return 0;
 }
 
 // Reserved server functions processing
 ///////////////////////////////////////////////////////////////////////////////
 #ifdef __SERVER
-    // void 	get_start_time (uint16 &multiplier, uint16 &year, uint16 &month, uint16 &day, uint16 &hour, uint16 &minute)
-    // void 	global_process (int type, Critter &cr, Critter @[]&group, Item @car, uint &x, uint &y, uint &toX, uint &toY, uint &speed, uint &encounterDescriptor, bool &waitForAnswer)
-    // void 	global_invite (Critter @[]&group, Item @car, uint encounterDescriptor, int combatMode, uint &mapId, uint16 &hexX, uint16 &hexY, uint8 &dir)
+    void get_start_time (uint16 &multiplier, uint16 &year, uint16 &month, uint16 &day, uint16 &hour, uint16 &minute) {
+        Event event(dictionary = { 
+            {"multiplier", multiplier}, 
+            {"year", year}, 
+            {"month", month}, 
+            {"day", day}, 
+            {"hour", hour}, 
+            {"minute", minute} 
+        });
+        
+        FOnline.Dispatch("map_critter_in", event);
+
+        multiplier = uint16(event["multiplier"]);
+        year = uint16(event["year"]);
+        month = uint16(event["month"]);
+        day = uint16(event["day"]);
+        hour = uint16(event["hour"]);
+        minute = uint16(event["minute"]);
+    }
+
+    void global_process(int type, Critter &cr, Critter @[]&group, Item @car, uint &x, uint &y, uint &toX, uint &toY, uint &speed, uint &encounterDescriptor, bool &waitForAnswer) {
+        Event event(dictionary = { 
+            {"type", type}, 
+            {"cr", @cr}, 
+            {"group", group}, 
+            {"car", car}, 
+            {"x", x}, 
+            {"y", y},
+            {"x", toX}, 
+            {"y", toY},
+            {"speed", speed},
+            {"encounterDescriptor", encounterDescriptor},
+            {"waitForAnswer", waitForAnswer}
+        });
+        
+        FOnline.Dispatch("global_process", event);
+    }
+    
+    void global_invite (Critter @[]&group, Item @car, uint encounterDescriptor, int combatMode, uint &mapId, uint16 &hexX, uint16 &hexY, uint8 &dir) {
+        Event event(dictionary = { 
+            {"type", group}, 
+            {"cr", car}, 
+            {"group", encounterDescriptor}, 
+            {"car", combatMode}, 
+            {"x", mapId}, 
+            {"y", hexX},
+            {"x", hexY}, 
+            {"y", dir}
+        });
+
+        FOnline.Dispatch("global_invite", event);
+    }
     
     void map_critter_in(Map &map, Critter &cr) {
-        Framework.Dispatch("map_critter_in", dictionary = {
-            {"map", @map},
-            {"cr",  @cr}
-        });
+        FOnline.Dispatch("map_critter_in", dictionary = { {"map", @map}, {"cr",  @cr} });
     }
 
     void map_critter_out(Map &map, Critter &cr) {
-        Framework.Dispatch("map_critter_out", dictionary = {
-            {"map", @map},
-            {"cr",  @cr}
-        });
+        FOnline.Dispatch("map_critter_out", dictionary = { {"map", @map}, {"cr",  @cr} });
     }
 
     void critter_init(Critter &cr, bool registration) {
-        Framework.Dispatch("critter_init", dictionary = {
-            {"cr",  @cr},
-            {"registration",  registration}
-        });
+        FOnline.Dispatch("critter_init", dictionary = { {"cr",  @cr}, {"registration",  registration} });
     }
 
     void critter_idle(Critter &cr) {
-        Framework.Dispatch("critter_idle", dictionary = {
-            {"cr",  @cr}
-        });
+        FOnline.Dispatch("critter_idle", dictionary = { {"cr",  @cr} });
     }
 
     void critter_finish(Critter &cr, bool toDelete) {
-        Framework.Dispatch("critter_finish", dictionary = {
-            {"cr",  @cr},
-            {"toDelete", toDelete}
-        });
+        FOnline.Dispatch("critter_finish", dictionary = { {"cr",  @cr}, {"toDelete", toDelete} });
     }
 
     void critter_dead(Critter &cr, Critter @killer) {
-        Framework.Dispatch("critter_dead", dictionary = {
-            {"cr",  @cr},
-            {"killer",  @killer}
-        });
+        FOnline.Dispatch("critter_dead", dictionary = { {"cr",  @cr}, {"killer",  @killer} });
     }
 
     void critter_respawn(Critter &cr) {
-        Framework.Dispatch("critter_respawn", dictionary = {
-            {"cr",  @cr}
-        });
+        FOnline.Dispatch("critter_respawn", dictionary = { {"cr",  @cr} });
     }
 
     void critter_attack(Critter &cr, Critter &target, ProtoItem &weapon, uint8 weaponMode, ProtoItem @ammo) {
-        Framework.Dispatch("critter_attack", dictionary = {
-            {"cr",  @cr},
-            {"target",  @target},
-            {"weapon",  @weapon},
-            {"weaponMode",  weaponMode},
-            {"ammo",  @ammo}
-        });
+        FOnline.Dispatch("critter_attack", dictionary = { {"cr",  @cr}, {"target",  @target}, {"weapon",  @weapon}, {"weaponMode",  weaponMode}, {"ammo",  @ammo} });
     }
 
     void critter_attacked(Critter &cr, Critter &attacker) {
-        Framework.Dispatch("critter_attacked", dictionary = {
-            {"cr",  @cr},
-            {"attacker",  @attacker}
-        });
+        FOnline.Dispatch("critter_attacked", dictionary = { {"cr",  @cr}, {"attacker",  @attacker} });
     }
 
-    // bool 	critter_stealing (Critter &cr, Critter &thief, Item &item, uint count)
-    // bool 	critter_use_item (Critter &cr, Item &item, Critter @targetCr, Item @targetItem, Scenery @targetScen, uint param)
-    // bool 	critter_use_skill (Critter &cr, int skill, Critter @targetCr, Item @targetItem, Scenery @targetScen)
-    // void 	critter_move_item (Critter &cr, Item &item, int fromSlot)
-    // void 	critter_reload_weapon (Critter &cr, Item &weapon, Item @ammo)
-    // void 	critter_move_item (Critter &cr, Item &item, uint8 fromSlot)
-    // bool 	critter_check_move_item (Critter &cr, Item &item, uint8 toSlot, Item @itemSwap)
-    // bool 	npc_plane_begin (Critter &npc, NpcPlane &plane, uint childIndex, int reason, Critter @someCr, Item @someItem)
-    // bool 	npc_plane_end (Critter &npc, NpcPlane &plane, uint childIndex, int reason, Critter @someCr, Item @someItem)
-    // bool 	npc_plane_run (Critter &npc, NpcPlane &plane, uint childIndex, int reason, uint &result0, uint &result1, uint &result2)
+    bool critter_stealing(Critter &cr, Critter &thief, Item &item, uint count) {
+        bool result = false;
+        Event event(dictionary = { {"cr",@cr}, {"thief",@thief}, {"item",@item}, {"count",count} });
+        FOnline.Dispatch("critter_stealing", event);
+        return bool(event["result"]);
+    }
+
+    bool critter_use_item(Critter &cr, Item &item, Critter @targetCr, Item @targetItem, Scenery @targetScen, uint param) {
+        bool result = false;
+        Event event(dictionary = { {"cr",@cr}, {"item",@item}, {"targetCr",@targetCr}, {"targetItem",targetItem}, {"targetScen",targetScen}, {"param",param} });
+        FOnline.Dispatch("critter_use_item", event);
+        return bool(event["result"]);
+    }
+
+    bool critter_use_skill(Critter &cr, int skill, Critter @targetCr, Item @targetItem, Scenery @targetScen) {
+        bool result = false;
+        Event event(dictionary = { {"cr",@cr}, {"skill",skill}, {"targetCr",@targetCr}, {"targetItem",targetItem}, {"targetScen",targetScen} });
+        FOnline.Dispatch("critter_use_skill", event);
+        return bool(event["result"]);
+    }
+
+    void critter_move_item(Critter &cr, Item &item, int fromSlot) {
+        FOnline.Dispatch("critter_move_item", dictionary = { {"cr",  @cr}, {"item",  @item}, {"fromSlot",  fromSlot} });
+    }
+
+    bool critter_check_move_item(Critter &cr, Item &item, uint8 toSlot, Item @itemSwap) {
+        bool result = false;
+        Event event(dictionary = { {"cr",@cr}, {"item",@item}, {"toSlot",toSlot}, {"itemSwap",@itemSwap} });
+        FOnline.Dispatch("critter_check_move_item", event);
+        return bool(event["result"]);
+    }
+
+    void critter_reload_weapon(Critter &cr, Item &weapon, Item @ammo) {
+        FOnline.Dispatch("critter_reload_weapon", dictionary = { {"cr",  @cr}, {"weapon",  @weapon}, {"ammo",  @ammo} });
+    }
+
+    bool npc_plane_begin(Critter &npc, NpcPlane &plane, uint childIndex, int reason, Critter @someCr, Item @someItem) {
+        bool result = false;
+        Event event(dictionary = { {"npc",@npc}, {"plane",@plane}, {"childIndex",childIndex}, {"reason",reason}, {"someCr",@someCr}, {"someItem",@someItem} });
+        FOnline.Dispatch("npc_plane_begin", event);
+        return bool(event["result"]);
+    }
+
+    bool npc_plane_end(Critter &npc, NpcPlane &plane, uint childIndex, int reason, Critter @someCr, Item @someItem) {
+        bool result = false;
+        Event event(dictionary = { {"npc",@npc}, {"plane",@plane}, {"childIndex",childIndex}, {"reason",reason}, {"someCr",@someCr}, {"someItem",@someItem} });
+        FOnline.Dispatch("npc_plane_end", event);
+        return bool(event["result"]);
+    }
+
+    bool npc_plane_run(Critter &npc, NpcPlane &plane, uint childIndex, int reason, uint &result0, uint &result1, uint &result2) {
+        bool result = false;
+        Event event(dictionary = { {"npc",@npc}, {"plane",@plane}, {"childIndex",childIndex}, {"reason",reason}, {"result0",result0}, {"result1",result1}, {"result2",result2} });
+        FOnline.Dispatch("npc_plane_run", event);
+        return bool(event["result"]);
+    }
+
+    void karma_voting( Critter& crFrom, Critter& crTo, bool valUp ) {
+        FOnline.Dispatch("karma_voting", dictionary = { {"crFrom",  @crFrom}, {"crTo",  @crTo}, {"valUp",  valUp} });
+    }
+
 #endif
 
 // Reserved client functions processing

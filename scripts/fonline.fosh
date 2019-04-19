@@ -1,4 +1,9 @@
 // by Erandelax 19/04/19
+#ifdef __CLIENT
+    #define Critter CritterCl
+    #define Item ItemCl
+#endif
+
 funcdef void EventCallback(Event&);
 
 shared interface IFOnlineFramework 
@@ -20,6 +25,24 @@ shared class Event {
     Event(dictionary data) {this.Data = data;}
     dictionaryValue@ opIndex(string id) {return this.Data[id];}
 }
+
+/*shared enum DataType {
+    DT_VOID = 0,            
+    DT_INT64 = 1,           DTAR_INT64 = -DT_INT64,
+    DT_INT32 = 2,           DTAR_INT32 = -DT_INT32,
+    DT_INT = DT_INT32,      DTAR_INT = -DT_INT,
+    DT_INT16 = 3,           DTAR_INT16 = -DT_INT16,
+    DT_INT8 = 4,            DTAR_INT8 = -DT_INT8,
+    DT_UINT64 = 5,          DTAR_UINT64 = -DT_UINT64,
+    DT_UINT32 = 6,          DTAR_UINT32 = -DT_UINT32,
+    DT_UINT = DT_UINT32,    DTAR_UINT = -DT_UINT,
+    DT_UINT16 = 7,          DTAR_UINT16 = -DT_UINT16,
+    DT_UINT8 = 8,           DTAR_UINT8 = -DT_UINT8,
+    DT_BOOL = 9,            DTAR_BOOL = -DT_BOOL,
+    DT_STRING = 10,         DTAR_STRING = -DT_STRING,
+    DT_ITEM = 11,           DTAR_ITEM = -DT_ITEM,
+    DT_CRITTER = 12,        DTAR_CRITTER = -DT_CRITTER
+}*/
 
 #ifndef MODULE_FONLINE
     import IFOnlineFramework@ get_FOnline() from "fonline";
