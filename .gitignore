@@ -18,3 +18,4 @@ profiler/
 /maps/*.fomapb
 /scripts/*.fosb
 /scripts/*.fosp
+dumps/
