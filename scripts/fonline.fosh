@@ -1,0 +1,26 @@
+// by Erandelax 19/04/19
+funcdef void EventCallback(Event&);
+
+shared interface IFOnlineFramework 
+{
+    IEventHandler@ On(string tag, EventCallback@ callback);
+    Event@ Dispatch(string tag, Event& event = Event());
+    Event@ Dispatch(string tag, dictionary& event);
+}
+
+shared interface IEventHandler 
+{
+    IEventHandler@ Shift(IEventHandler@ handler);
+    IEventHandler@ Push(IEventHandler@ handler);
+    IEventHandler@ Dispatch(Event& event);
+}
+
+shared class Event {
+    dictionary Data;
+    Event(dictionary data) {this.Data = data;}
+    dictionaryValue@ opIndex(string id) {return this.Data[id];}
+}
+
+#ifndef MODULE_FONLINE
+    import IFOnlineFramework@ get_FOnline() from "fonline";
+#endif

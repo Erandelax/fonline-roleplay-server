@@ -1,0 +1,11 @@
+#include "fonline.fosh"
+
+bool module_init() {
+    FOnline.On("keydown", @OnKeydown);
+    FOnline.Dispatch("keydown", dictionary = { {"key", 12} });
+    return true;
+}
+
+void OnKeydown(Event& event) {
+    Log( "It is alive " + uint(event["key"]) );
+}
